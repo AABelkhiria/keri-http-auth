@@ -1,0 +1,14 @@
+[package]
+name = "signify-http"
+version = "0.0.0"
+description = "HTTP transport and authenticated request support for Signify"
+edition.workspace = true
+rust-version.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+signify-crypto = { path = "../signify-crypto" }
+
+[lints]
+workspace = true
