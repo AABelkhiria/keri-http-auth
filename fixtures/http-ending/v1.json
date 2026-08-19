@@ -1,0 +1,644 @@
+{
+  "schema_version": 1,
+  "upstream": "https://github.com/WebOfTrust/signify-ts.git",
+  "reference_sha": "ae92eceb8e776ad57669707bff7f84db9390b711",
+  "generated_on": "2026-08-19",
+  "sources": [
+    "src/keri/end/ending.ts",
+    "test/end/ending.test.ts"
+  ],
+  "signers": {
+    "salt": "0123456789abcdef",
+    "tier": "low",
+    "temporary_profile": true,
+    "paths": [
+      "Hilga00",
+      "Hilga01",
+      "Hilga02"
+    ],
+    "signed_text": "{\"seid\":\"BA89hKezugU2LFKiFVbitoHAxXqJh6HQ8Rn9tH7fxd68\",\"name\":\"wit0\",\"dts\":\"2021-01-01T00:00:00.000000+00:00\",\"scheme\":\"http\",\"host\":\"localhost\",\"port\":8080,\"path\":\"/witness\"}",
+    "verification_keys": [
+      "DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw",
+      "DNK2KFnL0jUGlmvZHRse7HwNGVdtkM-ORvTZfFw7mDbt",
+      "DDvIoIYqeuXJ4Zb8e2luWfjPTg4FeIzfHzIO8lC56WjD"
+    ],
+    "indexed_signatures": [
+      "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+      "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+      "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F"
+    ],
+    "unindexed_signatures": [
+      "0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+      "0BDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+      "0BDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F"
+    ]
+  },
+  "prefix": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+  "cases": [
+    {
+      "name": "indexed_default_tags",
+      "note": "each marker is tagged with its own signature index",
+      "signages": [
+        {
+          "indexed": null,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": null,
+          "markers": [
+            {
+              "tag": null,
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": null,
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": null,
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed",
+              "verification_key": null
+            }
+          ]
+        }
+      ],
+      "header": "indexed=\"?1\";0=\"AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\";1=\"ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA\";2=\"ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F\"",
+      "header_length": 291,
+      "reparsed": [
+        {
+          "indexed": true,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "0",
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed"
+            },
+            {
+              "tag": "1",
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed"
+            },
+            {
+              "tag": "2",
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "named_indexed",
+      "note": "explicit tags replace the index defaults",
+      "signages": [
+        {
+          "indexed": null,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": null,
+          "markers": [
+            {
+              "tag": "siger0",
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": "siger1",
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": "siger2",
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed",
+              "verification_key": null
+            }
+          ]
+        }
+      ],
+      "header": "indexed=\"?1\";siger0=\"AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\";siger1=\"ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA\";siger2=\"ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F\"",
+      "header_length": 306,
+      "reparsed": [
+        {
+          "indexed": true,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "siger0",
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed"
+            },
+            {
+              "tag": "siger1",
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed"
+            },
+            {
+              "tag": "siger2",
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "indexed_cesr_full",
+      "note": "every parameter present, in the order the reference writes them",
+      "signages": [
+        {
+          "indexed": true,
+          "signer": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "ordinal": "0",
+          "digest": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": null,
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": null,
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": null,
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed",
+              "verification_key": null
+            }
+          ]
+        }
+      ],
+      "header": "indexed=\"?1\";signer=\"EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-\";ordinal=\"0\";digest=\"EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-\";kind=\"CESR\";0=\"AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\";1=\"ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA\";2=\"ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F\"",
+      "header_length": 423,
+      "reparsed": [
+        {
+          "indexed": true,
+          "signer": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "ordinal": "0",
+          "digest": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "0",
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed"
+            },
+            {
+              "tag": "1",
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed"
+            },
+            {
+              "tag": "2",
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unindexed_default_tags",
+      "note": "each marker is tagged with the verification key that verifies it",
+      "signages": [
+        {
+          "indexed": null,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": null,
+          "markers": [
+            {
+              "tag": null,
+              "value": "0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "unindexed",
+              "verification_key": "DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw"
+            },
+            {
+              "tag": null,
+              "value": "0BDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "unindexed",
+              "verification_key": "DNK2KFnL0jUGlmvZHRse7HwNGVdtkM-ORvTZfFw7mDbt"
+            },
+            {
+              "tag": null,
+              "value": "0BDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "unindexed",
+              "verification_key": "DDvIoIYqeuXJ4Zb8e2luWfjPTg4FeIzfHzIO8lC56WjD"
+            }
+          ]
+        }
+      ],
+      "header": "indexed=\"?0\";DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw=\"0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\";DNK2KFnL0jUGlmvZHRse7HwNGVdtkM-ORvTZfFw7mDbt=\"0BDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA\";DDvIoIYqeuXJ4Zb8e2luWfjPTg4FeIzfHzIO8lC56WjD=\"0BDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F\"",
+      "header_length": 420,
+      "reparsed": [
+        {
+          "indexed": false,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw",
+              "value": "0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "unindexed"
+            },
+            {
+              "tag": "DNK2KFnL0jUGlmvZHRse7HwNGVdtkM-ORvTZfFw7mDbt",
+              "value": "0BDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "unindexed"
+            },
+            {
+              "tag": "DDvIoIYqeuXJ4Zb8e2luWfjPTg4FeIzfHzIO8lC56WjD",
+              "value": "0BDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "unindexed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "combined",
+      "note": "two signages in one header, comma separated",
+      "signages": [
+        {
+          "indexed": true,
+          "signer": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": null,
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": null,
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed",
+              "verification_key": null
+            },
+            {
+              "tag": null,
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed",
+              "verification_key": null
+            }
+          ]
+        },
+        {
+          "indexed": false,
+          "signer": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": null,
+              "value": "0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "unindexed",
+              "verification_key": "DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw"
+            },
+            {
+              "tag": null,
+              "value": "0BDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "unindexed",
+              "verification_key": "DNK2KFnL0jUGlmvZHRse7HwNGVdtkM-ORvTZfFw7mDbt"
+            },
+            {
+              "tag": null,
+              "value": "0BDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "unindexed",
+              "verification_key": "DDvIoIYqeuXJ4Zb8e2luWfjPTg4FeIzfHzIO8lC56WjD"
+            }
+          ]
+        }
+      ],
+      "header": "indexed=\"?1\";signer=\"EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-\";kind=\"CESR\";0=\"AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\";1=\"ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA\";2=\"ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F\",indexed=\"?0\";signer=\"EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-\";kind=\"CESR\";DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw=\"0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\";DNK2KFnL0jUGlmvZHRse7HwNGVdtkM-ORvTZfFw7mDbt=\"0BDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA\";DDvIoIYqeuXJ4Zb8e2luWfjPTg4FeIzfHzIO8lC56WjD=\"0BDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F\"",
+      "header_length": 844,
+      "reparsed": [
+        {
+          "indexed": true,
+          "signer": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "0",
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "indexed"
+            },
+            {
+              "tag": "1",
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "indexed"
+            },
+            {
+              "tag": "2",
+              "value": "ACDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "indexed"
+            }
+          ]
+        },
+        {
+          "indexed": false,
+          "signer": "EGqHykT1gVyuWxsVW6LUUsz_KtLJGYMi_SrohInwvjC-",
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw",
+              "value": "0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "unindexed"
+            },
+            {
+              "tag": "DNK2KFnL0jUGlmvZHRse7HwNGVdtkM-ORvTZfFw7mDbt",
+              "value": "0BDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
+              "kind": "unindexed"
+            },
+            {
+              "tag": "DDvIoIYqeuXJ4Zb8e2luWfjPTg4FeIzfHzIO8lC56WjD",
+              "value": "0BDVOy2LvGgFINUneL4iwA55ypJR6vDpLLbdleEsiANmFazwZARypJMiw9vu2Iu0oL7XCUiUT4JncU8P3HdIp40F",
+              "kind": "unindexed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "authing_single_named_unindexed",
+      "note": "one named unindexed marker, which is what the request signer emits",
+      "signages": [
+        {
+          "indexed": false,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": null,
+          "markers": [
+            {
+              "tag": "signify",
+              "value": "0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "unindexed",
+              "verification_key": "DAi2TaRNVtGmV8eSUvqHIBzTzIgrQi57vKzw5Svmy7jw"
+            }
+          ]
+        }
+      ],
+      "header": "indexed=\"?0\";signify=\"0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\"",
+      "header_length": 111,
+      "reparsed": [
+        {
+          "indexed": false,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "signify",
+              "value": "0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+              "kind": "unindexed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "opaque_kind",
+      "note": "a non-CESR kind leaves the marker values uninterpreted",
+      "signages": [
+        {
+          "indexed": false,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": "JSON",
+          "markers": [
+            {
+              "tag": "x",
+              "value": "1",
+              "kind": "text",
+              "verification_key": null
+            },
+            {
+              "tag": "y",
+              "value": "2",
+              "kind": "text",
+              "verification_key": null
+            }
+          ]
+        }
+      ],
+      "header": "indexed=\"?0\";kind=\"JSON\";x=\"1\";y=\"2\"",
+      "header_length": 36,
+      "reparsed": [
+        {
+          "indexed": false,
+          "signer": null,
+          "ordinal": null,
+          "digest": null,
+          "kind": "JSON",
+          "markers": [
+            {
+              "tag": "x",
+              "value": "1",
+              "kind": "text"
+            },
+            {
+              "tag": "y",
+              "value": "2",
+              "kind": "text"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "reference_quirks": {
+    "a_tag_forges_header_fields": {
+      "header": "indexed=\"?1\";a\";b=\"c=\"AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN\"",
+      "note": "tags are interpolated unescaped, so a tag carrying the delimiters produces a header whose extra field a parser reads as real",
+      "rust_error_category": "InvalidFieldText"
+    },
+    "a_value_forges_header_fields": {
+      "header": "indexed=\"?0\";kind=\"JSON\";x=\"val\";indexed=\"?0\"",
+      "note": "values are interpolated unescaped too, so a marker value can inject a second indexed flag into its own signage",
+      "rust_error_category": "InvalidFieldText"
+    },
+    "only_the_first_space_is_removed": {
+      "corrupted_tag": [
+        {
+          "indexed": true,
+          "signer": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "0",
+              "value": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN"
+            },
+            {
+              "tag": " 1",
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA"
+            }
+          ]
+        }
+      ],
+      "unparsable": {
+        "threw": true,
+        "error_category": "Error",
+        "error_message": "Missing indexed field in Signature header signage.",
+        "value": null
+      },
+      "note": "JavaScript String.replace with a string argument replaces one occurrence, so every space after the first survives: it either becomes part of the following tag or, before `indexed`, hides the required field and the whole header fails; keripy's str.replace removes them all",
+      "rust_decision": "whitespace around the , and ; separators is skipped, which is what both implementations mean"
+    },
+    "an_item_without_a_value_crashes": {
+      "threw": true,
+      "error_category": "TypeError",
+      "error_message": "Cannot read properties of undefined (reading 'replaceAll')",
+      "value": null,
+      "note": "the split produces one element and the code indexes the missing second, so a malformed header raises a TypeError rather than a protocol error",
+      "rust_error_category": "MalformedItem"
+    },
+    "an_empty_header_crashes": {
+      "threw": true,
+      "error_category": "TypeError",
+      "error_message": "Cannot read properties of undefined (reading 'replaceAll')",
+      "value": null,
+      "note": "the same dereference, reached by the empty string",
+      "rust_error_category": "MalformedItem"
+    },
+    "a_value_containing_equals_is_truncated": {
+      "threw": true,
+      "error_category": "Error",
+      "error_message": "Unsupported code a",
+      "value": null,
+      "note": "split('=', 2) discards the remainder in JavaScript, so the value becomes `a`; Python's maxsplit keeps it, so keripy reads `a=b` -- the two disagree about the same header",
+      "rust_error_category": "MalformedItem"
+    },
+    "quotes_are_stripped_from_anywhere": {
+      "threw": true,
+      "error_category": "Error",
+      "error_message": "Unsupported code a",
+      "value": null,
+      "note": "replaceAll('\"', '') removes every quote rather than the surrounding pair, silently joining the pieces into abc",
+      "rust_error_category": "MalformedItem"
+    },
+    "the_indexed_flag_is_true_unless_it_matches_falsy": {
+      "zero": true,
+      "garbage": true,
+      "empty": true,
+      "falsy": [
+        "false",
+        "0",
+        "?0",
+        "no",
+        "false",
+        "False",
+        "off"
+      ],
+      "truthy": [
+        "true",
+        "1",
+        "?1",
+        "yes",
+        "true",
+        "True",
+        "on"
+      ],
+      "note": "the test is `not in FALSY`, and FALSY's `false` and `0` entries are a boolean and a number that a parsed string can never equal, so indexed=\"0\" is read as true -- the opposite of what it says",
+      "rust_error_category": "InvalidIndexedFlag"
+    },
+    "a_repeated_tag_drops_a_signature": {
+      "parsed": [
+        {
+          "indexed": true,
+          "signer": null,
+          "kind": "CESR",
+          "markers": [
+            {
+              "tag": "0",
+              "value": "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA"
+            }
+          ]
+        }
+      ],
+      "note": "items are collected into a Map, so the second silently replaces the first and one signature disappears",
+      "rust_error_category": "DuplicateField"
+    },
+    "a_marker_tagged_as_a_parameter_disappears": {
+      "parsed": [
+        {
+          "indexed": true,
+          "signer": "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
+          "kind": "CESR",
+          "markers": []
+        }
+      ],
+      "note": "parameters are read out of the same map as the markers, so a marker tagged signer becomes the signer parameter and leaves no marker behind",
+      "rust_error_category": "ReservedTag"
+    },
+    "an_empty_signage_is_accepted": {
+      "emitted": "indexed=\"?0\"",
+      "parsed": [
+        {
+          "indexed": true,
+          "signer": null,
+          "kind": "CESR",
+          "markers": []
+        }
+      ],
+      "note": "a signage with no markers renders and parses, asserting nothing at all",
+      "rust_error_category": "NoMarkers"
+    },
+    "marker_and_flag_disagreement_throws": {
+      "indexed_signature_unindexed_flag": {
+        "threw": true,
+        "error_category": "Error",
+        "error_message": "Indexed signature marker [object Object] when indexed False.",
+        "value": null
+      },
+      "unindexed_signature_indexed_flag": {
+        "threw": true,
+        "error_category": "Error",
+        "error_message": "Unindexed signature marker [object Object] when indexed True.",
+        "value": null
+      },
+      "unindexed_signature_without_key": {
+        "threw": true,
+        "error_category": "Error",
+        "error_message": "Indexed signature marker is missing verfer",
+        "value": null
+      },
+      "note": "the flag is a separate argument that can contradict the marker types, and an unindexed marker needs a verfer for its default tag",
+      "rust_decision": "the flag is derived from the marker variant and an unnamed unindexed marker requires its key, so none of the three states is representable"
+    }
+  }
+}

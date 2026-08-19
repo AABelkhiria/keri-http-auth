@@ -11,5 +11,15 @@ categories.workspace = true
 [dependencies]
 signify-crypto = { path = "../signify-crypto" }
 
+[dev-dependencies]
+criterion.workspace = true
+proptest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[[bench]]
+name = "ending"
+harness = false
+
 [lints]
 workspace = true
