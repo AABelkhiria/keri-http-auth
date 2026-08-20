@@ -21,5 +21,9 @@ serde_json.workspace = true
 name = "ending"
 harness = false
 
+[[bench]]
+name = "authing"
+harness = false
+
 [lints]
 workspace = true
