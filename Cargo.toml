@@ -8,14 +8,32 @@ publish.workspace = true
 keywords.workspace = true
 categories.workspace = true
 
+[features]
+http-client = [
+    "dep:http",
+    "dep:http-body-util",
+    "dep:hyper",
+    "dep:hyper-rustls",
+    "dep:hyper-util",
+    "dep:tokio",
+]
+
 [dependencies]
 signify-crypto = { path = "../signify-crypto" }
+
+http = { workspace = true, optional = true }
+http-body-util = { workspace = true, optional = true }
+hyper = { workspace = true, optional = true }
+hyper-rustls = { workspace = true, optional = true }
+hyper-util = { workspace = true, optional = true }
+tokio = { workspace = true, optional = true }
 
 [dev-dependencies]
 criterion.workspace = true
 proptest.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+tokio = { workspace = true, features = ["io-util", "macros", "rt-multi-thread"] }
 
 [[bench]]
 name = "ending"
@@ -28,6 +46,11 @@ harness = false
 [[bench]]
 name = "transport"
 harness = false
+
+[[bench]]
+name = "http_client"
+harness = false
+required-features = ["http-client"]
 
 [lints]
 workspace = true
