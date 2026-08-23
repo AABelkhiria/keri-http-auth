@@ -58,6 +58,10 @@ name = "retry"
 harness = false
 
 [[bench]]
+name = "auth"
+harness = false
+
+[[bench]]
 name = "http_client"
 harness = false
 required-features = ["http-client"]
