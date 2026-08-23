@@ -21,6 +21,8 @@ http-client = [
 [dependencies]
 signify-crypto = { path = "../signify-crypto" }
 
+getrandom.workspace = true
+
 http = { workspace = true, optional = true }
 http-body-util = { workspace = true, optional = true }
 hyper = { workspace = true, optional = true }
@@ -49,6 +51,10 @@ harness = false
 
 [[bench]]
 name = "request_response"
+harness = false
+
+[[bench]]
+name = "retry"
 harness = false
 
 [[bench]]
