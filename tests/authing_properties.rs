@@ -2,9 +2,9 @@
 
 use std::sync::OnceLock;
 
+use keri_cesr::crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
+use keri_cesr::crypto::verifier::KeyTransferability;
 use proptest::{prelude::*, test_runner::TestCaseError};
-use signify_crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
-use signify_crypto::verifier::KeyTransferability;
 use signify_http::header::{HeaderName, HeaderValue, Headers};
 use signify_http::signature::authentication::{AuthenticationError, RequestSigner, ResponseVerifier};
 use signify_http::signature::fields::FieldText;
@@ -195,7 +195,7 @@ proptest! {
         fail(signed.apply(&mut headers))?;
 
         let verifier = ResponseVerifier::new(fail(signer.key_identifier().and_then(|key| {
-            signify_crypto::verifier::VerificationKey::from_qb64(key.as_str())
+            keri_cesr::crypto::verifier::VerificationKey::from_qb64(key.as_str())
                 .map_err(|error| AuthenticationError::Crypto { source: Box::new(error) })
         }))?);
         let verified = fail(verifier.verify(&target, &headers))?;
@@ -220,7 +220,7 @@ proptest! {
         let input = fail(signer.signature_input(components, 1))?;
         let signed = fail(signer.sign(&input, &target, &headers))?;
         let verifier = ResponseVerifier::new(fail(signer.key_identifier().and_then(|key| {
-            signify_crypto::verifier::VerificationKey::from_qb64(key.as_str())
+            keri_cesr::crypto::verifier::VerificationKey::from_qb64(key.as_str())
                 .map_err(|error| AuthenticationError::Crypto { source: Box::new(error) })
         }))?);
 
@@ -277,7 +277,7 @@ proptest! {
         fail(signed.apply(&mut headers))?;
 
         let verifier = ResponseVerifier::new(fail(signer.key_identifier().and_then(|key| {
-            signify_crypto::verifier::VerificationKey::from_qb64(key.as_str())
+            keri_cesr::crypto::verifier::VerificationKey::from_qb64(key.as_str())
                 .map_err(|error| AuthenticationError::Crypto { source: Box::new(error) })
         }))?);
         let verified = verifier.verify(&target, &headers).is_ok();

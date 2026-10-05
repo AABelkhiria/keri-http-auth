@@ -9,8 +9,8 @@
 use std::hint::black_box;
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use signify_crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
-use signify_crypto::verifier::{KeyTransferability, VerificationKey};
+use keri_cesr::crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
+use keri_cesr::crypto::verifier::{KeyTransferability, VerificationKey};
 use signify_http::header::{HeaderName, HeaderValue, Headers};
 use signify_http::signature::authentication::{RequestSigner, ResponseVerifier};
 use signify_http::signature::input::{RequestTarget, SignatureInputHeader, default_components};

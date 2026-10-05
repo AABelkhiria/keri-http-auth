@@ -2,11 +2,11 @@
 
 use std::error::Error;
 
+use keri_cesr::crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
+use keri_cesr::crypto::signature::{IndexedSignature, UnindexedSignature};
+use keri_cesr::crypto::signer::{SignaturePlacement, Signer};
+use keri_cesr::crypto::verifier::{KeyTransferability, VerificationKey};
 use serde::Deserialize;
-use signify_crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
-use signify_crypto::signature::{IndexedSignature, UnindexedSignature};
-use signify_crypto::signer::{SignaturePlacement, Signer};
-use signify_crypto::verifier::{KeyTransferability, VerificationKey};
 use signify_http::signature::fields::{
     FieldText, IndexedMarker, OpaqueMarker, Signage, SignageBuilder, SignageMarkers, SignatureFieldError,
     SignatureHeader, UnindexedMarker,

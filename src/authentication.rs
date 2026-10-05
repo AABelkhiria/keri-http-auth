@@ -22,9 +22,9 @@
 use core::fmt;
 use std::error::Error;
 
-use signify_crypto::CryptoError;
-use signify_crypto::signer::Signer;
-use signify_crypto::verifier::VerificationKey;
+use keri_cesr::crypto::CryptoError;
+use keri_cesr::crypto::signer::Signer;
+use keri_cesr::crypto::verifier::VerificationKey;
 
 use crate::header::{HeaderError, HeaderName, HeaderValue, Headers};
 use crate::signature::fields::{
@@ -39,8 +39,8 @@ use crate::signature::input::{
 /// Signs requests with one private key.
 ///
 /// ```
-/// use signify_crypto::salt::{Salt, SecurityTier};
-/// use signify_crypto::verifier::KeyTransferability;
+/// use keri_cesr::crypto::salt::{Salt, SecurityTier};
+/// use keri_cesr::crypto::verifier::KeyTransferability;
 /// use signify_http::header::{HeaderName, HeaderValue, Headers};
 /// use signify_http::signature::authentication::RequestSigner;
 /// use signify_http::signature::input::{RequestTarget, default_components};
@@ -479,8 +479,8 @@ impl Error for AuthenticationError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use signify_crypto::salt::{Salt, SecurityTier};
-    use signify_crypto::verifier::KeyTransferability;
+    use keri_cesr::crypto::salt::{Salt, SecurityTier};
+    use keri_cesr::crypto::verifier::KeyTransferability;
     use std::error::Error;
 
     use crate::signature::input::default_components;

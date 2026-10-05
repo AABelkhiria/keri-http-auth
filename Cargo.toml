@@ -19,7 +19,7 @@ http-client = [
 ]
 
 [dependencies]
-signify-crypto = { path = "../signify-crypto" }
+keri-cesr.workspace = true
 
 getrandom.workspace = true
 

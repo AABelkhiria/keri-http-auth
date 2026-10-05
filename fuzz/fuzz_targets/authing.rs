@@ -8,7 +8,7 @@
 use std::sync::OnceLock;
 
 use libfuzzer_sys::fuzz_target;
-use signify_crypto::verifier::VerificationKey;
+use keri_cesr::crypto::verifier::VerificationKey;
 use signify_http::header::{HeaderError, HeaderName, HeaderValue, Headers};
 use signify_http::signature::authentication::{AuthenticationError, ResponseVerifier};
 use signify_http::signature::input::{

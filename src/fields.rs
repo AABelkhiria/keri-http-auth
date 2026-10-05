@@ -31,9 +31,9 @@ use std::borrow::Cow;
 use std::error::Error;
 use std::str::FromStr;
 
-use signify_crypto::CryptoError;
-use signify_crypto::signature::{IndexedSignature, UnindexedSignature};
-use signify_crypto::verifier::VerificationKey;
+use keri_cesr::crypto::CryptoError;
+use keri_cesr::crypto::signature::{IndexedSignature, UnindexedSignature};
+use keri_cesr::crypto::verifier::VerificationKey;
 
 /// Name of the header this module formats and parses.
 pub const SIGNATURE_HEADER_NAME: &str = "Signature";
@@ -492,8 +492,8 @@ fn item(name: &str, value: &str) -> String {
 /// Builds one [`Signage`].
 ///
 /// ```
-/// use signify_crypto::signature::UnindexedSignature;
-/// use signify_crypto::verifier::VerificationKey;
+/// use keri_cesr::crypto::signature::UnindexedSignature;
+/// use keri_cesr::crypto::verifier::VerificationKey;
 /// use signify_http::signature::fields::{
 ///     FieldText, SignageBuilder, SignageMarkers, SignatureHeader, UnindexedMarker,
 /// };

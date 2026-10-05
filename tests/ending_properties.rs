@@ -1,8 +1,8 @@
 //! Property and invalid-near-miss coverage for the `Signature` header format.
 
+use keri_cesr::crypto::signature::{IndexedSignature, UnindexedSignature};
+use keri_cesr::crypto::verifier::VerificationKey;
 use proptest::{prelude::*, test_runner::TestCaseError};
-use signify_crypto::signature::{IndexedSignature, UnindexedSignature};
-use signify_crypto::verifier::VerificationKey;
 use signify_http::signature::fields::{
     FieldText, IndexedMarker, MAX_FIELD_TEXT_BYTES, RESERVED_FIELDS, Signage, SignageBuilder, SignageMarkers,
     SignatureFieldError, SignatureHeader, UnindexedMarker,

@@ -7,8 +7,8 @@
 use std::hint::black_box;
 
 use criterion::{Criterion, criterion_group, criterion_main};
-use signify_crypto::signature::{IndexedSignature, UnindexedSignature};
-use signify_crypto::verifier::VerificationKey;
+use keri_cesr::crypto::signature::{IndexedSignature, UnindexedSignature};
+use keri_cesr::crypto::verifier::VerificationKey;
 use signify_http::signature::fields::{
     FieldText, IndexedMarker, SignageBuilder, SignageMarkers, SignatureHeader, UnindexedMarker,
 };
