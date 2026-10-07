@@ -7,8 +7,8 @@
 
 use std::sync::OnceLock;
 
-use libfuzzer_sys::fuzz_target;
 use keri_cesr::crypto::verifier::VerificationKey;
+use libfuzzer_sys::fuzz_target;
 use signify_http::header::{HeaderError, HeaderName, HeaderValue, Headers};
 use signify_http::signature::authentication::{AuthenticationError, ResponseVerifier};
 use signify_http::signature::input::{
@@ -20,8 +20,7 @@ use signify_http::signature::input::{
 const AGENT_KEY: &str = "DMZh_y-H5C3cSbZZST-fqnsmdNTReZxIh0t2xSTOJQ8a";
 
 /// The exact `Signature` header that response carries.
-const SIGNATURE: &str =
-    r#"indexed="?0";signify="0BDLh8QCytVBx1YMam4Vt8s4b9HAW1dwfE4yU5H_w1V6gUvPBoVGWQlIMdC16T3WFWHDHCbMcuceQzrr6n9OULsK""#;
+const SIGNATURE: &str = r#"indexed="?0";signify="0BDLh8QCytVBx1YMam4Vt8s4b9HAW1dwfE4yU5H_w1V6gUvPBoVGWQlIMdC16T3WFWHDHCbMcuceQzrr6n9OULsK""#;
 
 fn verifier() -> Option<&'static ResponseVerifier> {
     static VERIFIER: OnceLock<Option<ResponseVerifier>> = OnceLock::new();
@@ -112,7 +111,8 @@ fuzz_target!(|data: &[u8]| {
                 Ok(base) => {
                     assert_eq!(base.as_str().lines().count(), 3, "a target forged a line in the base");
                     assert!(
-                        base.as_str().starts_with(&format!("\"@method\": {head}\n\"@path\": {tail}\n")),
+                        base.as_str()
+                            .starts_with(&format!("\"@method\": {head}\n\"@path\": {tail}\n")),
                         "the base did not commit to the target verbatim"
                     );
                 }

@@ -1,8 +1,8 @@
 #![no_main]
 #![forbid(unsafe_code)]
 
-use libfuzzer_sys::fuzz_target;
 use keri_cesr::crypto::signature::IndexedSignature;
+use libfuzzer_sys::fuzz_target;
 use signify_http::signature::fields::{
     FieldText, IndexedMarker, MAX_FIELD_TEXT_BYTES, MAX_HEADER_BYTES, RESERVED_FIELDS, SignageBuilder, SignageMarkers,
     SignatureFieldError, SignatureHeader,
