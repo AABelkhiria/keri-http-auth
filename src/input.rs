@@ -1664,7 +1664,7 @@ mod tests {
             SignatureInputError::InvalidParameterValue { name: "nonce" },
             SignatureInputError::Malformed { reason: "x", offset: 0 },
         ] {
-            assert!(!error.to_string().is_empty());
+            assert_ne!(error.to_string(), "");
             assert!(error.source().is_none());
         }
 

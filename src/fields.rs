@@ -1470,7 +1470,7 @@ mod tests {
             SignatureFieldError::KindMismatch { kind: "CESR" },
             SignatureFieldError::MissingVerificationKey,
         ] {
-            assert!(!error.to_string().is_empty());
+            assert_ne!(error.to_string(), "");
             assert!(error.source().is_none());
         }
     }

@@ -284,7 +284,7 @@ fn fixture_metadata_matches_the_pinned_reference() -> Result<(), Box<dyn Error>>
     assert_eq!(fixture.schema_version, 1);
     assert_eq!(fixture.upstream, "https://github.com/WebOfTrust/signify-ts.git");
     assert_eq!(fixture.reference_sha, REFERENCE_SHA);
-    assert!(!fixture.generated_on.is_empty());
+    assert_ne!(fixture.generated_on, "");
     assert_eq!(fixture.sources, ["src/keri/end/ending.ts", "test/end/ending.test.ts"]);
     assert_eq!(fixture.prefix.len(), 44);
     Ok(())
@@ -382,7 +382,7 @@ fn header_injection_through_tags_and_values_is_refused() -> Result<(), Box<dyn E
     // The tag's own quotes close the field early, so the header carries `b="c="…` as an extra
     // item that a parser reads as real.
     assert!(tag.header.contains(r#"a";b="c="#));
-    assert!(!tag.note.is_empty());
+    assert_ne!(tag.note, "");
     assert_eq!(tag.rust_error_category, "InvalidFieldText");
     assert!(matches!(
         FieldText::new(r#"a";b="c"#),
@@ -434,7 +434,7 @@ fn reference_parser_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
             .as_ref()
             .is_some_and(|text| text.contains("Missing indexed field"))
     );
-    assert!(!spaces.note.is_empty());
+    assert_ne!(spaces.note, "");
     assert!(spaces.rust_decision.contains("separators"));
     // Rust skips the whitespace instead, so both signages parse with clean tags.
     let repaired = SignatureHeader::parse(&format!(
@@ -462,7 +462,7 @@ fn reference_parser_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
         assert!(quirk.threw, "{header:?} did not fail upstream");
         assert!(quirk.error_category.is_some());
         assert!(quirk.error_message.is_some());
-        assert!(!quirk.note.is_empty());
+        assert_ne!(quirk.note, "");
         assert_eq!(quirk.rust_error_category, "MalformedItem");
         assert!(
             matches!(
@@ -499,7 +499,7 @@ fn reference_marker_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
     assert!(flag.empty);
     assert_eq!(flag.falsy, ["false", "0", "?0", "no", "false", "False", "off"]);
     assert_eq!(flag.truthy, ["true", "1", "?1", "yes", "true", "True", "on"]);
-    assert!(!flag.note.is_empty());
+    assert_ne!(flag.note, "");
     assert_eq!(flag.rust_error_category, "InvalidIndexedFlag");
     for text in ["0", "maybe", ""] {
         assert!(
@@ -518,7 +518,7 @@ fn reference_marker_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
         Some(1),
         "upstream kept both markers",
     );
-    assert!(!repeated.note.is_empty());
+    assert_ne!(repeated.note, "");
     assert_eq!(repeated.rust_error_category, "DuplicateField");
     assert!(matches!(
         SignatureHeader::parse(&format!(
@@ -533,7 +533,7 @@ fn reference_marker_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
     let signage = shadowed.parsed.first().ok_or("no signage")?;
     assert!(signage.markers.is_empty(), "the marker survived upstream");
     assert_eq!(signage.signer.as_deref(), Some(siger.as_str()));
-    assert!(!shadowed.note.is_empty());
+    assert_ne!(shadowed.note, "");
     assert_eq!(shadowed.rust_error_category, "ReservedTag");
     assert!(matches!(
         IndexedMarker::named(FieldText::new("signer")?, IndexedSignature::from_qb64(siger)?),
@@ -544,7 +544,7 @@ fn reference_marker_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
     let empty = &quirks.an_empty_signage_is_accepted;
     assert_eq!(empty.emitted, r#"indexed="?0""#);
     assert_eq!(empty.parsed.first().map(|signage| signage.markers.len()), Some(0));
-    assert!(!empty.note.is_empty());
+    assert_ne!(empty.note, "");
     assert_eq!(empty.rust_error_category, "NoMarkers");
     assert!(matches!(
         SignatureHeader::parse(r#"indexed="?1""#),
@@ -567,7 +567,7 @@ fn reference_marker_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
     ] {
         assert!(crash.error_message.as_ref().is_some_and(|text| !text.is_empty()));
     }
-    assert!(!disagreement.note.is_empty());
+    assert_ne!(disagreement.note, "");
     assert!(disagreement.rust_decision.contains("derived"));
     // The first two are unrepresentable; the third is a typed error.
     assert!(matches!(

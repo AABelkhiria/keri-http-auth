@@ -331,7 +331,7 @@ fn fixture_metadata_matches_the_pinned_reference() -> Result<(), Box<dyn Error>>
     assert_eq!(fixture.schema_version, 1);
     assert_eq!(fixture.upstream, "https://github.com/WebOfTrust/signify-ts.git");
     assert_eq!(fixture.reference_sha, REFERENCE_SHA);
-    assert!(!fixture.generated_on.is_empty());
+    assert_ne!(fixture.generated_on, "");
     assert_eq!(
         fixture.sources,
         [
@@ -358,7 +358,7 @@ fn fixture_metadata_matches_the_pinned_reference() -> Result<(), Box<dyn Error>>
         fixture.normalize_trims.output
     );
 
-    assert!(!fixture.clock.note.is_empty());
+    assert_ne!(fixture.clock.note, "");
     assert_eq!(fixture.clock.frozen_at, "2021-01-01T00:00:00.000Z");
     assert_eq!(fixture.clock.created, 1_609_459_200);
     Ok(())
@@ -557,7 +557,7 @@ fn reference_coverage_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<
     assert!(dropped.verifying_base.contains("x-absent"));
     assert!(!dropped.verifying_base.contains("\"x-absent\": "));
     assert_eq!(dropped.rust_error_category, "MissingCoveredHeader");
-    assert!(!dropped.note.is_empty());
+    assert_ne!(dropped.note, "");
     let input = SignatureInputBuilder::new(
         InputLabel::signify(),
         vec![SignatureComponent::Method, SignatureComponent::new("x-absent")?],
@@ -577,7 +577,7 @@ fn reference_coverage_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<
     assert!(derived.verifying_threw);
     assert!(!derived.signing_base.contains("@authority"));
     assert_eq!(derived.rust_error_category, "UnknownDerivedComponent");
-    assert!(!derived.note.is_empty());
+    assert_ne!(derived.note, "");
     for name in ["@authority", "@query"] {
         assert!(matches!(
             SignatureComponent::new(name),
@@ -590,7 +590,7 @@ fn reference_coverage_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<
     assert!(empty.header.contains("signify=()"));
     assert!(empty.base.starts_with("\"@signature-params: ();"));
     assert_eq!(empty.rust_error_category.as_deref(), Some("NoComponents"));
-    assert!(!empty.note.is_empty());
+    assert_ne!(empty.note, "");
     assert!(matches!(
         SignatureInputBuilder::new(InputLabel::signify(), Vec::new(), 1).build(),
         Err(SignatureInputError::NoComponents)
@@ -621,7 +621,7 @@ fn reference_coverage_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<
     let joined = &quirks.duplicate_headers_are_joined;
     assert_eq!(joined.joined, "1, 2");
     assert_eq!(joined.rust_error_category, "DuplicateHeader");
-    assert!(!joined.note.is_empty());
+    assert_ne!(joined.note, "");
     let mut duplicated = Headers::new();
     duplicated.insert(HeaderName::new("X-Repeat")?, HeaderValue::new("1")?)?;
     assert!(
@@ -643,7 +643,7 @@ fn reference_injection_quirks_are_pinned_and_safely_diverged() -> Result<(), Box
     assert!(escaped.base.contains("keyid=a\"b\\c"));
     assert!(escaped.header.contains("keyid=\"a\\\"b\\\\c\""));
     assert_eq!(escaped.rust_error_category.as_deref(), Some("InvalidFieldText"));
-    assert!(!escaped.note.is_empty());
+    assert_ne!(escaped.note, "");
     assert!(FieldText::new("a\"b\\c").is_err());
 
     // 8. A semicolon in a parameter value adds a parameter to the signed bytes only.
@@ -651,7 +651,7 @@ fn reference_injection_quirks_are_pinned_and_safely_diverged() -> Result<(), Box
     assert!(forged.base.contains(";alg=forged;alg=ed25519"));
     assert!(forged.header.contains("keyid=\"a;alg=forged\""));
     assert_eq!(forged.rust_error_category.as_deref(), Some("InvalidFieldText"));
-    assert!(!forged.note.is_empty());
+    assert_ne!(forged.note, "");
     assert!(FieldText::new("a;alg=forged").is_err());
 
     // 9. A newline in the path adds a whole forged component line.
@@ -659,7 +659,7 @@ fn reference_injection_quirks_are_pinned_and_safely_diverged() -> Result<(), Box
     assert!(path.base.contains("\"@method\": DELETE\n\"@method\": GET"));
     assert!(!path.header.contains("DELETE"), "the header hides the forged line");
     assert_eq!(path.rust_error_category.as_deref(), Some("InvalidRequestPath"));
-    assert!(!path.note.is_empty());
+    assert_ne!(path.note, "");
     assert!(matches!(
         RequestTarget::new("GET", "/a\n\"@method\": DELETE"),
         Err(SignatureInputError::InvalidRequestPath { .. })
@@ -708,7 +708,7 @@ fn reference_parser_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
         "upstream kept the earlier input"
     );
     assert_eq!(duplicate.rust_error_category, "DuplicateLabel");
-    assert!(!duplicate.note.is_empty());
+    assert_ne!(duplicate.note, "");
     assert!(matches!(
         SignatureInputHeader::parse("signify=(\"@method\");created=1, signify=(\"@path\");created=2"),
         Err(SignatureInputError::DuplicateLabel { .. })
@@ -719,7 +719,7 @@ fn reference_parser_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
     assert!(!label.threw);
     assert_eq!(label.value, Some(false));
     assert!(label.rust_decision.contains("constructor parameter"));
-    assert!(!label.note.is_empty());
+    assert_ne!(label.note, "");
 
     // 14. Only the first signage is read.
     let first = &quirks.verify_reads_only_the_first_signage;
@@ -740,7 +740,7 @@ fn reference_parser_quirks_are_pinned_and_safely_diverged() -> Result<(), Box<dy
     assert_eq!(mixed.missing_signature.value, Some(false));
     assert!(mixed.bad_signature.threw);
     assert!(mixed.rust_decision.contains("distinct variant"));
-    assert!(!mixed.note.is_empty());
+    assert_ne!(mixed.note, "");
 
     // Rust distinguishes all three.
     let verifier = ResponseVerifier::new(VerificationKey::from_qb64(

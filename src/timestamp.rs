@@ -283,7 +283,7 @@ mod tests {
     #[test]
     fn errors_carry_readable_text() {
         for error in [TimestampError::BeforeEpoch, TimestampError::OutOfRange { year: 12_345 }] {
-            assert!(!error.to_string().is_empty());
+            assert_ne!(error.to_string(), "");
             assert!(error.source().is_none());
         }
     }

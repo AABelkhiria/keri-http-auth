@@ -761,7 +761,7 @@ mod tests {
                 label: "signify".to_owned(),
             },
         ] {
-            assert!(!error.to_string().is_empty());
+            assert_ne!(error.to_string(), "");
             assert!(error.source().is_none());
         }
         for error in [
@@ -769,7 +769,7 @@ mod tests {
             AuthenticationError::from(SignatureFieldError::NoMarkers),
             AuthenticationError::from(HeaderError::EmptyName),
         ] {
-            assert!(!error.to_string().is_empty());
+            assert_ne!(error.to_string(), "");
             assert!(error.source().is_some());
         }
     }

@@ -539,7 +539,7 @@ mod tests {
             HeaderError::DuplicateHeader { name: "x".to_owned() },
             HeaderError::TooManyHeaders { maximum: MAX_HEADERS },
         ] {
-            assert!(!error.to_string().is_empty());
+            assert_ne!(error.to_string(), "");
             assert!(error.source().is_none());
         }
     }
