@@ -4,14 +4,14 @@ use std::sync::OnceLock;
 
 use keri_cesr::crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
 use keri_cesr::crypto::verifier::KeyTransferability;
-use proptest::{prelude::*, test_runner::TestCaseError};
-use signify_http::header::{HeaderName, HeaderValue, Headers};
-use signify_http::signature::authentication::{AuthenticationError, RequestSigner, ResponseVerifier};
-use signify_http::signature::fields::FieldText;
-use signify_http::signature::input::{
+use keri_http_auth::authentication::{AuthenticationError, RequestSigner, ResponseVerifier};
+use keri_http_auth::fields::FieldText;
+use keri_http_auth::header::{HeaderName, HeaderValue, Headers};
+use keri_http_auth::input::{
     InputLabel, MAX_COMPONENTS, MAX_PARAMETER_INTEGER, MAX_SIGNATURE_INPUT_BYTES, RequestTarget, SignatureComponent,
     SignatureInput, SignatureInputBuilder, SignatureInputError, SignatureInputHeader, default_components,
 };
+use proptest::{prelude::*, test_runner::TestCaseError};
 
 fn fail<T, E: core::fmt::Display>(result: Result<T, E>) -> Result<T, TestCaseError> {
     result.map_err(|error| TestCaseError::fail(error.to_string()))

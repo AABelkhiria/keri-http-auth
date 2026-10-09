@@ -92,7 +92,7 @@ pub const MAX_FIELD_TEXT_BYTES: usize = 1024;
 /// that has them converts to text at this boundary.
 ///
 /// ```
-/// use signify_http::signature::fields::FieldText;
+/// use keri_http_auth::fields::FieldText;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let tag = FieldText::new("signify")?;
@@ -494,7 +494,7 @@ fn item(name: &str, value: &str) -> String {
 /// ```
 /// use keri_cesr::crypto::signature::UnindexedSignature;
 /// use keri_cesr::crypto::verifier::VerificationKey;
-/// use signify_http::signature::fields::{
+/// use keri_http_auth::fields::{
 ///     FieldText, SignageBuilder, SignageMarkers, SignatureHeader, UnindexedMarker,
 /// };
 ///
@@ -613,7 +613,7 @@ impl SignageBuilder {
 /// One complete `Signature` header value.
 ///
 /// ```
-/// use signify_http::signature::fields::SignatureHeader;
+/// use keri_http_auth::fields::SignatureHeader;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let header = SignatureHeader::parse(concat!(

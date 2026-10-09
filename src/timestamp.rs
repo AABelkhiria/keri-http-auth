@@ -13,7 +13,7 @@
 //!
 //! Roadmap 3.10 recorded this value's production as the client's, on the reasoning that a protocol
 //! crate never reads a clock. It lands here instead because Roadmap 5.4 made the clock an injected
-//! [`Clock`](crate::retry::Clock): the value is a wire format, and keeping it beside the signature
+//! `Clock`: the value is a wire format, and keeping it beside the signature
 //! that covers it is what lets the two be built from a single reading. A caller still supplies the
 //! time.
 
@@ -39,7 +39,7 @@ pub const MAX_YEAR: i64 = 9_999;
 /// ```
 /// use core::time::Duration;
 /// use std::time::SystemTime;
-/// use signify_http::signature::timestamp::SignifyTimestamp;
+/// use keri_http_auth::timestamp::SignifyTimestamp;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let at = SystemTime::UNIX_EPOCH + Duration::from_millis(1_700_000_000_123);

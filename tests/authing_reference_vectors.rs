@@ -9,14 +9,14 @@ use std::error::Error;
 
 use keri_cesr::crypto::salt::{Salt, SecurityTier};
 use keri_cesr::crypto::verifier::{KeyTransferability, VerificationKey};
-use serde::Deserialize;
-use signify_http::header::{HeaderName, HeaderValue, Headers};
-use signify_http::signature::authentication::{AuthenticationError, RequestSigner, ResponseVerifier};
-use signify_http::signature::fields::{FieldText, SignatureHeader};
-use signify_http::signature::input::{
+use keri_http_auth::authentication::{AuthenticationError, RequestSigner, ResponseVerifier};
+use keri_http_auth::fields::{FieldText, SignatureHeader};
+use keri_http_auth::header::{HeaderName, HeaderValue, Headers};
+use keri_http_auth::input::{
     InputLabel, RequestTarget, SignatureComponent, SignatureInput, SignatureInputBuilder, SignatureInputError,
     SignatureInputHeader, default_components,
 };
+use serde::Deserialize;
 
 const REFERENCE_SHA: &str = "ae92eceb8e776ad57669707bff7f84db9390b711";
 
@@ -259,7 +259,7 @@ struct Outcome {
 fn fixture() -> Result<Fixture, Box<dyn Error>> {
     Ok(serde_json::from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../fixtures/http-authing/v1.json"
+        "/fixtures/http-authing/v1.json"
     )))?)
 }
 

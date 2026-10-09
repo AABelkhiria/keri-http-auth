@@ -1,8 +1,8 @@
 //! Signing a request and verifying a response.
 //!
 //! This module ports `Authenticater` from `src/keri/core/authing.ts`. It composes the two halves
-//! that already exist: [`crate::signature::input`] decides what a signature covers and produces the
-//! exact bytes signed, and [`crate::signature::fields`] carries the signature material.
+//! that already exist: [`crate::input`] decides what a signature covers and produces the
+//! exact bytes signed, and [`crate::fields`] carries the signature material.
 //!
 //! ```text
 //! Signature-Input: signify=("@method" "@path" "signify-resource" "signify-timestamp");created=…;keyid="…";alg="ed25519"
@@ -26,12 +26,12 @@ use keri_cesr::crypto::CryptoError;
 use keri_cesr::crypto::signer::Signer;
 use keri_cesr::crypto::verifier::VerificationKey;
 
-use crate::header::{HeaderError, HeaderName, HeaderValue, Headers};
-use crate::signature::fields::{
+use crate::fields::{
     FieldText, SIGNATURE_HEADER_NAME, SignageBuilder, SignageMarkers, SignatureFieldError, SignatureHeader,
     UnindexedMarker,
 };
-use crate::signature::input::{
+use crate::header::{HeaderError, HeaderName, HeaderValue, Headers};
+use crate::input::{
     ED25519_ALGORITHM, InputLabel, RequestTarget, SIGNATURE_INPUT_HEADER_NAME, SignatureComponent, SignatureInput,
     SignatureInputBuilder, SignatureInputError, SignatureInputHeader,
 };
@@ -41,9 +41,9 @@ use crate::signature::input::{
 /// ```
 /// use keri_cesr::crypto::salt::{Salt, SecurityTier};
 /// use keri_cesr::crypto::verifier::KeyTransferability;
-/// use signify_http::header::{HeaderName, HeaderValue, Headers};
-/// use signify_http::signature::authentication::RequestSigner;
-/// use signify_http::signature::input::{RequestTarget, default_components};
+/// use keri_http_auth::header::{HeaderName, HeaderValue, Headers};
+/// use keri_http_auth::authentication::RequestSigner;
+/// use keri_http_auth::input::{RequestTarget, default_components};
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// // The salt the pinned upstream tests use; it is their own public constant.
@@ -483,7 +483,7 @@ mod tests {
     use keri_cesr::crypto::verifier::KeyTransferability;
     use std::error::Error;
 
-    use crate::signature::input::default_components;
+    use crate::input::default_components;
 
     const RESOURCE: &str = "EWJkQCFvKuyxZi582yJPb0wcwuW3VXmFNuvbQuBpgmIs";
     const STAMP: &str = "2022-09-24T00:05:48.196795+00:00";

@@ -1,7 +1,7 @@
 //! The `Signature-Input` header and the signature base it describes.
 //!
 //! A signed request carries two headers. `Signature` holds the signature material and is
-//! [`crate::signature::fields`]' concern; `Signature-Input` says *what* that signature covers, and
+//! [`crate::fields`]' concern; `Signature-Input` says *what* that signature covers, and
 //! the bytes actually signed — the **signature base** — are derived from it:
 //!
 //! ```text
@@ -33,8 +33,8 @@ use core::fmt;
 use std::error::Error;
 use std::str::FromStr;
 
+use crate::fields::{FieldText, SignatureFieldError};
 use crate::header::{HeaderError, HeaderName, Headers};
-use crate::signature::fields::{FieldText, SignatureFieldError};
 
 /// Name of the header this module formats and parses.
 pub const SIGNATURE_INPUT_HEADER_NAME: &str = "Signature-Input";
@@ -91,7 +91,7 @@ pub const MAX_PARAMETER_INTEGER: u64 = 999_999_999_999_999;
 /// so an upper-case label would produce a header it could not emit.
 ///
 /// ```
-/// use signify_http::signature::input::InputLabel;
+/// use keri_http_auth::input::InputLabel;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(InputLabel::signify().as_str(), "signify");
@@ -257,7 +257,7 @@ pub fn default_components() -> Result<Vec<SignatureComponent>, SignatureInputErr
 /// signing — so a caller cannot accidentally cover a query the peer will not.
 ///
 /// ```
-/// use signify_http::signature::input::RequestTarget;
+/// use keri_http_auth::input::RequestTarget;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let target = RequestTarget::new("POST", "/boot")?;
@@ -516,7 +516,7 @@ impl SignatureInput {
 /// Builds one [`SignatureInput`].
 ///
 /// ```
-/// use signify_http::signature::input::{
+/// use keri_http_auth::input::{
 ///     InputLabel, SignatureInputBuilder, SignatureInputHeader, default_components,
 /// };
 ///

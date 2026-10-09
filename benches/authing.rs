@@ -11,9 +11,9 @@ use std::hint::black_box;
 use criterion::{Criterion, criterion_group, criterion_main};
 use keri_cesr::crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
 use keri_cesr::crypto::verifier::{KeyTransferability, VerificationKey};
-use signify_http::header::{HeaderName, HeaderValue, Headers};
-use signify_http::signature::authentication::{RequestSigner, ResponseVerifier};
-use signify_http::signature::input::{RequestTarget, SignatureInputHeader, default_components};
+use keri_http_auth::authentication::{RequestSigner, ResponseVerifier};
+use keri_http_auth::header::{HeaderName, HeaderValue, Headers};
+use keri_http_auth::input::{RequestTarget, SignatureInputHeader, default_components};
 
 /// The headers a KERIA request carries, two of which the signature covers.
 const HEADERS: [(&str, &str); 5] = [

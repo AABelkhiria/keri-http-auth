@@ -6,11 +6,11 @@ use keri_cesr::crypto::salt::{KeyDerivationProfile, Salt, SecurityTier};
 use keri_cesr::crypto::signature::{IndexedSignature, UnindexedSignature};
 use keri_cesr::crypto::signer::{SignaturePlacement, Signer};
 use keri_cesr::crypto::verifier::{KeyTransferability, VerificationKey};
-use serde::Deserialize;
-use signify_http::signature::fields::{
+use keri_http_auth::fields::{
     FieldText, IndexedMarker, OpaqueMarker, Signage, SignageBuilder, SignageMarkers, SignatureFieldError,
     SignatureHeader, UnindexedMarker,
 };
+use serde::Deserialize;
 
 const REFERENCE_SHA: &str = "ae92eceb8e776ad57669707bff7f84db9390b711";
 
@@ -182,7 +182,7 @@ struct ParsedMarker {
 fn fixture() -> Result<Fixture, Box<dyn Error>> {
     Ok(serde_json::from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../fixtures/http-ending/v1.json"
+        "/fixtures/http-ending/v1.json"
     )))?)
 }
 

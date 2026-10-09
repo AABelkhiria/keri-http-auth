@@ -9,7 +9,7 @@ use std::hint::black_box;
 use criterion::{Criterion, criterion_group, criterion_main};
 use keri_cesr::crypto::signature::{IndexedSignature, UnindexedSignature};
 use keri_cesr::crypto::verifier::VerificationKey;
-use signify_http::signature::fields::{
+use keri_http_auth::fields::{
     FieldText, IndexedMarker, SignageBuilder, SignageMarkers, SignatureHeader, UnindexedMarker,
 };
 

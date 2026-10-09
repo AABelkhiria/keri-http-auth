@@ -35,7 +35,7 @@ pub const MAX_HEADERS: usize = 128;
 /// ASCII-case-insensitive as HTTP requires.
 ///
 /// ```
-/// use signify_http::header::HeaderName;
+/// use keri_http_auth::header::HeaderName;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let name = HeaderName::new("Signify-Resource")?;
@@ -140,7 +140,7 @@ const fn is_token_byte(byte: u8) -> bool {
 /// otherwise let a value forge a whole line in a signature base.
 ///
 /// ```
-/// use signify_http::header::HeaderValue;
+/// use keri_http_auth::header::HeaderValue;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(HeaderValue::new("  application/json  ")?.as_str(), "application/json");
@@ -219,7 +219,7 @@ const fn is_field_scalar(scalar: char) -> bool {
 /// Names are unique, ignoring case. Lookup is case-insensitive.
 ///
 /// ```
-/// use signify_http::header::{HeaderName, HeaderValue, Headers};
+/// use keri_http_auth::header::{HeaderName, HeaderValue, Headers};
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let headers = Headers::from_pairs([

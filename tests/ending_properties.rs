@@ -2,11 +2,11 @@
 
 use keri_cesr::crypto::signature::{IndexedSignature, UnindexedSignature};
 use keri_cesr::crypto::verifier::VerificationKey;
-use proptest::{prelude::*, test_runner::TestCaseError};
-use signify_http::signature::fields::{
+use keri_http_auth::fields::{
     FieldText, IndexedMarker, MAX_FIELD_TEXT_BYTES, RESERVED_FIELDS, Signage, SignageBuilder, SignageMarkers,
     SignatureFieldError, SignatureHeader, UnindexedMarker,
 };
+use proptest::{prelude::*, test_runner::TestCaseError};
 
 /// Signature material pinned by `fixtures/http-ending/v1.json`.
 const SIGERS: [&str; 3] = [
@@ -173,7 +173,7 @@ proptest! {
     #[test]
     fn an_accepted_value_cannot_forge_a_field(value in "[ -~]{1,24}") {
         let Ok(value) = FieldText::new(value) else { return Ok(()) };
-        let Ok(marker) = signify_http::signature::fields::OpaqueMarker::new(fail(FieldText::new("x"))?, value.clone())
+        let Ok(marker) = keri_http_auth::fields::OpaqueMarker::new(fail(FieldText::new("x"))?, value.clone())
         else {
             return Ok(());
         };
