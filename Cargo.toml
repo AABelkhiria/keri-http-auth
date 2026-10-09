@@ -5,6 +5,7 @@ description = "KERI HTTP message signatures and request authentication"
 edition = "2024"
 rust-version = "1.97"
 publish = false
+license = "Apache-2.0 OR MIT"
 keywords = ["keri", "keria", "signify", "http", "signature"]
 categories = ["authentication", "web-programming"]
 
