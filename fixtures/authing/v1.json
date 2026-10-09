@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "upstream": "https://github.com/WebOfTrust/signify-ts.git",
-  "reference_sha": "ae92eceb8e776ad57669707bff7f84db9390b711",
+  "reference_sha": "91a04a5edd804425f42be75ffbf034f8d14e5cb2",
   "generated_on": "2026-08-19",
   "sources": [
     "src/keri/core/httping.ts",
