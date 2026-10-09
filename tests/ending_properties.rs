@@ -8,7 +8,7 @@ use keri_http_auth::fields::{
 };
 use proptest::{prelude::*, test_runner::TestCaseError};
 
-/// Signature material pinned by `fixtures/http-ending/v1.json`.
+/// Signature material pinned by `fixtures/ending/v1.json`.
 const SIGERS: [&str; 3] = [
     "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
     "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",

@@ -24,7 +24,7 @@
 //! and every space and control byte. The reference validates neither: a tag of `a";b="c` produces
 //! a header carrying a forged extra field, and a value of `val";indexed="?0` injects a second
 //! `indexed` flag into the signage that quoted it. Both are refused here at construction. The
-//! remaining divergences are listed in `PORTING.md` §9 and pinned by `fixtures/http-ending/`.
+//! remaining divergences are listed in `PORTING.md` §9 and pinned by `fixtures/ending/`.
 
 use core::fmt;
 use std::borrow::Cow;

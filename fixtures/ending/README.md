@@ -12,8 +12,8 @@ Generate and verify from the repository root after building the pinned checkout:
 
 ```bash
 npm --prefix reference/signify-ts run build
-node tools/reference-vectors/http_ending.mjs --write   # regenerate
-node tools/reference-vectors/http_ending.mjs --check   # verify determinism
+node tools/reference-vectors/ending.mjs --write   # regenerate
+node tools/reference-vectors/ending.mjs --check   # verify determinism
 ```
 
 ## Provenance of the signature material

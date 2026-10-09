@@ -13,8 +13,8 @@ Generate and verify from the repository root after building the pinned checkout:
 
 ```bash
 npm --prefix reference/signify-ts run build
-node tools/reference-vectors/http_authing.mjs --write   # regenerate
-node tools/reference-vectors/http_authing.mjs --check   # verify determinism
+node tools/reference-vectors/authing.mjs --write   # regenerate
+node tools/reference-vectors/authing.mjs --check   # verify determinism
 ```
 
 ## How the signature base is captured

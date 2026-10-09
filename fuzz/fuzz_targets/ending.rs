@@ -8,7 +8,7 @@ use signify_http::signature::fields::{
     SignatureFieldError, SignatureHeader,
 };
 
-/// One signature pinned by `fixtures/http-ending/v1.json`, used to build headers around fuzzed tags.
+/// One signature pinned by `fixtures/ending/v1.json`, used to build headers around fuzzed tags.
 const SIGER: &str = "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN";
 
 fuzz_target!(|data: &[u8]| {

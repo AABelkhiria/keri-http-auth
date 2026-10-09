@@ -182,7 +182,7 @@ struct ParsedMarker {
 fn fixture() -> Result<Fixture, Box<dyn Error>> {
     Ok(serde_json::from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/fixtures/http-ending/v1.json"
+        "/fixtures/ending/v1.json"
     )))?)
 }
 

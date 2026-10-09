@@ -730,7 +730,7 @@ impl SignatureInputHeader {
     /// [`MAX_SIGNATURE_INPUT_BYTES`].
     pub fn to_header_value(&self) -> Result<String, SignatureInputError> {
         // Two members are separated by a comma and a space, which is what the reference's
-        // serializer emits; `fixtures/http-authing/v1.json` pins the exact spelling.
+        // serializer emits; `fixtures/authing/v1.json` pins the exact spelling.
         let rendered = self
             .inputs
             .iter()

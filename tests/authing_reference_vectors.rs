@@ -259,7 +259,7 @@ struct Outcome {
 fn fixture() -> Result<Fixture, Box<dyn Error>> {
     Ok(serde_json::from_str(include_str!(concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/fixtures/http-authing/v1.json"
+        "/fixtures/authing/v1.json"
     )))?)
 }
 
