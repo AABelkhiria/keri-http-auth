@@ -1,17 +1,17 @@
-// Generates and checks Signature-header vectors from the compiled pinned signify-ts checkout.
+// Generates and checks Signature-header vectors from the pinned signify-ts.
 import { readFileSync, writeFileSync } from "node:fs";
 
-import { b } from "../../reference/signify-ts/dist/keri/core/core.js";
-import { designature, signature, Signage, FALSY, TRUTHY } from "../../reference/signify-ts/dist/keri/end/ending.js";
-import { Cigar } from "../../reference/signify-ts/dist/keri/core/cigar.js";
-import { Siger } from "../../reference/signify-ts/dist/keri/core/siger.js";
-import { MtrDex } from "../../reference/signify-ts/dist/keri/core/matter.js";
-import { Salter, Tier } from "../../reference/signify-ts/dist/keri/core/salter.js";
-import libsodium from "../../reference/signify-ts/node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm/libsodium-wrappers.mjs";
+import { b } from "./node_modules/signify-ts/dist/keri/core/core.js";
+import { designature, signature, Signage, FALSY, TRUTHY } from "./node_modules/signify-ts/dist/keri/end/ending.js";
+import { Cigar } from "./node_modules/signify-ts/dist/keri/core/cigar.js";
+import { Siger } from "./node_modules/signify-ts/dist/keri/core/siger.js";
+import { MtrDex } from "./node_modules/signify-ts/dist/keri/core/matter.js";
+import { Salter, Tier } from "./node_modules/signify-ts/dist/keri/core/salter.js";
+import libsodium from "./node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm/libsodium-wrappers.mjs";
+import { referenceSha } from "./reference.mjs";
 
 await libsodium.ready;
 
-const referenceSha = "ae92eceb8e776ad57669707bff7f84db9390b711";
 
 // Exactly the provenance the pinned `test/end/ending.test.ts` uses: a raw 16-byte salt, three
 // derivation paths, the low tier, and the temporary Argon2 profile (`temp`).

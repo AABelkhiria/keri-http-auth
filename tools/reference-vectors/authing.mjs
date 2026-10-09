@@ -1,4 +1,4 @@
-// Generates and checks request-authentication vectors from the compiled pinned signify-ts checkout.
+// Generates and checks request-authentication vectors from the pinned signify-ts.
 //
 // The signature base a request commits to is internal to `siginput` and to `Authenticater.verify`:
 // neither returns it. Both reach it through an injected object -- `signer.sign(ser)` on the signing
@@ -7,23 +7,23 @@
 // therefore the reference's own, not a reconstruction.
 import { readFileSync, writeFileSync } from "node:fs";
 
-import { b } from "../../reference/signify-ts/dist/keri/core/core.js";
-import { Salter } from "../../reference/signify-ts/dist/keri/core/salter.js";
-import { Verfer } from "../../reference/signify-ts/dist/keri/core/verfer.js";
+import { b } from "./node_modules/signify-ts/dist/keri/core/core.js";
+import { Salter } from "./node_modules/signify-ts/dist/keri/core/salter.js";
+import { Verfer } from "./node_modules/signify-ts/dist/keri/core/verfer.js";
 import {
   siginput,
   desiginput,
   normalize,
   HEADER_SIG_INPUT,
   HEADER_SIG_TIME,
-} from "../../reference/signify-ts/dist/keri/core/httping.js";
-import { Authenticater } from "../../reference/signify-ts/dist/keri/core/authing.js";
-import { serializeDictionary } from "../../reference/signify-ts/node_modules/structured-headers/dist/index.js";
-import libsodium from "../../reference/signify-ts/node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm/libsodium-wrappers.mjs";
+} from "./node_modules/signify-ts/dist/keri/core/httping.js";
+import { Authenticater } from "./node_modules/signify-ts/dist/keri/core/authing.js";
+import { serializeDictionary } from "./node_modules/structured-headers/dist/index.js";
+import libsodium from "./node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm/libsodium-wrappers.mjs";
+import { referenceSha } from "./reference.mjs";
 
 await libsodium.ready;
 
-const referenceSha = "ae92eceb8e776ad57669707bff7f84db9390b711";
 
 // `siginput` reads the wall clock through `nowUTC()`, which is `new Date()`. The pinned unit tests
 // freeze it with `vitest.spyOn(utilApi, 'nowUTC')`; a plain Node script freezes the global `Date`

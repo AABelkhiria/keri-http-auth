@@ -8,10 +8,10 @@
 - Binary fields: none. Every value is header text, which is ASCII by construction; the signature
   material is qualified Base64.
 
-Generate and verify from the repository root after building the pinned checkout:
+Generate and verify from the repository root:
 
 ```bash
-npm --prefix reference/signify-ts run build
+npm ci --prefix tools/reference-vectors
 node tools/reference-vectors/ending.mjs --write   # regenerate
 node tools/reference-vectors/ending.mjs --check   # verify determinism
 ```
