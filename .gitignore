@@ -1,2 +1,5 @@
 /target/
 /tools/reference-vectors/node_modules/
+/fuzz/corpus/
+/fuzz/artifacts/
+/fuzz/target/

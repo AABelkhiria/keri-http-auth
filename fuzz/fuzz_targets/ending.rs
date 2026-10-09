@@ -2,11 +2,11 @@
 #![forbid(unsafe_code)]
 
 use keri_cesr::crypto::signature::IndexedSignature;
-use libfuzzer_sys::fuzz_target;
-use signify_http::signature::fields::{
+use keri_http_auth::fields::{
     FieldText, IndexedMarker, MAX_FIELD_TEXT_BYTES, MAX_HEADER_BYTES, RESERVED_FIELDS, SignageBuilder, SignageMarkers,
     SignatureFieldError, SignatureHeader,
 };
+use libfuzzer_sys::fuzz_target;
 
 /// One signature pinned by `fixtures/ending/v1.json`, used to build headers around fuzzed tags.
 const SIGER: &str = "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN";

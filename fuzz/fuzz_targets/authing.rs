@@ -8,13 +8,13 @@
 use std::sync::OnceLock;
 
 use keri_cesr::crypto::verifier::VerificationKey;
-use libfuzzer_sys::fuzz_target;
-use signify_http::header::{HeaderError, HeaderName, HeaderValue, Headers};
-use signify_http::signature::authentication::{AuthenticationError, ResponseVerifier};
-use signify_http::signature::input::{
+use keri_http_auth::authentication::{AuthenticationError, ResponseVerifier};
+use keri_http_auth::header::{HeaderError, HeaderName, HeaderValue, Headers};
+use keri_http_auth::input::{
     InputLabel, MAX_SIGNATURE_INPUT_BYTES, RequestTarget, SignatureComponent, SignatureInputBuilder,
     SignatureInputError, SignatureInputHeader,
 };
+use libfuzzer_sys::fuzz_target;
 
 /// The agent key the pinned `test/core/authing.test.ts` response is verified against.
 const AGENT_KEY: &str = "DMZh_y-H5C3cSbZZST-fqnsmdNTReZxIh0t2xSTOJQ8a";
