@@ -1,0 +1,32 @@
+name: Reference vectors
+
+on:
+  pull_request:
+    paths:
+      - "fixtures/**"
+      - "tools/reference-vectors/**"
+      - ".github/workflows/reference-vectors.yml"
+  push:
+    branches: [main]
+    paths:
+      - "fixtures/**"
+      - "tools/reference-vectors/**"
+      - ".github/workflows/reference-vectors.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate-and-compare:
+    name: Regenerate and compare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/reference-vectors/package-lock.json
+      - run: npm ci --prefix tools/reference-vectors
+      - run: npm run --prefix tools/reference-vectors check
