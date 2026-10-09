@@ -3,6 +3,10 @@
   "private": true,
   "type": "module",
   "description": "Generators for the cross-language fixtures under fixtures/, run against a pinned signify-ts.",
+  "scripts": {
+    "generate": "node regenerate.mjs",
+    "check": "node regenerate.mjs --check"
+  },
   "engines": {
     "node": ">=22"
   },
