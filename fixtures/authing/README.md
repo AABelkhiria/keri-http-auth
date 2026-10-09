@@ -73,7 +73,7 @@ dictionary — a comma and a space.
 ## Reference behavior recorded as safe Rust divergences
 
 - **`created` comes from the system clock.** A message and its signature depend on when they were
-  built. In Rust `created` is a required parameter, as the reply timestamp became in Roadmap 3.6.
+  built. In Rust `created` is a required parameter, so a protocol crate never reads the clock.
 - **An absent covered header is dropped.** On the signing side it disappears from the base *and*
   from the covered list, so a caller silently gets a weaker signature than it asked for; on the
   verifying side the field stays listed while only its item disappears, so the reconstructed base

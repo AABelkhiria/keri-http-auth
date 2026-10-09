@@ -724,7 +724,7 @@
       "frozen_created": 1609459200,
       "frozen_at": "2021-01-01T00:00:00.000Z",
       "note": "siginput calls nowUTC(), which is new Date(), so a message and its signature depend on when they were built; the pinned unit tests freeze it with vitest and this generator freezes the global Date to the same instant",
-      "rust_decision": "created is a required parameter, as the reply timestamp became in Roadmap 3.6, so a protocol crate never reads the clock"
+      "rust_decision": "created is a required parameter, so a protocol crate never reads the clock"
     },
     "an_absent_covered_header_is_dropped": {
       "signing_base": "\"@method\": GET\n\"@path\": /x\n\"signify-resource\": EWJkQCFvKuyxZi582yJPb0wcwuW3VXmFNuvbQuBpgmIs\n\"@signature-params: (@method @path signify-resource);created=1609459200;keyid=DN54yRad_BTqgZYUSi_NthRBQrxSnqQdJXWI5UHcGOQt;alg=ed25519\"",

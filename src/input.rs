@@ -26,8 +26,8 @@
 //! opening quote *before* `@signature-params` rather than around it. Both spellings are reproduced
 //! exactly.
 //!
-//! The header is close to an RFC 8941 dictionary but the accepted space is deliberately narrower;
-//! `docs/adr/0011-signature-input-canonicalization.md` records why.
+//! The header is close to an RFC 8941 dictionary but the accepted space is deliberately narrower,
+//! so that every accepted header has exactly one signature base.
 
 use core::fmt;
 use std::error::Error;
@@ -233,7 +233,7 @@ impl fmt::Display for SignatureComponent {
 ///
 /// Every KERIA request covers exactly these four: the method, the path, the identifier the request
 /// speaks for, and its timestamp. The two header names are lower-case, as upstream, which is also
-/// the spelling that interoperates with keripy — see `PORTING.md` §9.
+/// the spelling that interoperates with keripy.
 ///
 /// # Errors
 ///
@@ -383,7 +383,7 @@ impl SignatureInput {
     ///
     /// The reference takes this from the system clock. It is an input here, so a protocol crate
     /// never reads the clock and a signature is reproducible; deciding whether a received value is
-    /// fresh enough is a replay policy, which Roadmap 5.5 owns.
+    /// fresh enough is a replay policy, which belongs to the transport.
     #[must_use]
     pub const fn created(&self) -> u64 {
         self.created

@@ -504,7 +504,7 @@ const quirks = {
     frozen_created: 1609459200,
     frozen_at: FROZEN_ISO,
     note: "siginput calls nowUTC(), which is new Date(), so a message and its signature depend on when they were built; the pinned unit tests freeze it with vitest and this generator freezes the global Date to the same instant",
-    rust_decision: "created is a required parameter, as the reply timestamp became in Roadmap 3.6, so a protocol crate never reads the clock",
+    rust_decision: "created is a required parameter, so a protocol crate never reads the clock",
   },
   an_absent_covered_header_is_dropped: {
     signing_base: missingHeaderSign.base,

@@ -11,11 +11,9 @@
 //! reproduced exactly, because the header is one of the four components a Signify signature covers
 //! and any other spelling would change the bytes the signature commits to.
 //!
-//! Roadmap 3.10 recorded this value's production as the client's, on the reasoning that a protocol
-//! crate never reads a clock. It lands here instead because Roadmap 5.4 made the clock an injected
-//! `Clock`: the value is a wire format, and keeping it beside the signature
-//! that covers it is what lets the two be built from a single reading. A caller still supplies the
-//! time.
+//! The value is a wire format, so it lives here beside the signature that covers it: keeping the
+//! two together lets both be built from a single clock reading. The clock itself stays outside,
+//! since a protocol crate never reads one. A caller supplies the time.
 
 use core::fmt;
 use std::error::Error;
@@ -135,8 +133,8 @@ impl fmt::Display for SignifyTimestamp {
 
 /// Returns the proleptic Gregorian date for a count of days since 1970-01-01.
 ///
-/// Howard Hinnant's `civil_from_days`, the inverse of the `days_from_civil` Roadmap 5.4 uses to
-/// *read* an HTTP-date. Exact integer arithmetic with no floating point and no lookup table.
+/// Howard Hinnant's `civil_from_days`, the inverse of his `days_from_civil`. Exact integer
+/// arithmetic with no floating point and no lookup table.
 fn civil_from_days(days: i64) -> Option<(i64, i64, i64)> {
     let shifted = days.checked_add(719_468)?;
     let era = shifted.div_euclid(146_097);

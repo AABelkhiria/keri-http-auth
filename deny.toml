@@ -1,4 +1,4 @@
-# cargo-deny policy for the signify-rs workspace.
+# cargo-deny policy for keri-http-auth.
 
 [graph]
 all-features = true

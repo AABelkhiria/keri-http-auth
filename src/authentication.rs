@@ -17,7 +17,7 @@
 //! responses never holds signing capability.
 //!
 //! Freshness is deliberately not decided here: [`SignatureInput::created`] is returned to the
-//! caller, and replay policy is Roadmap 5.5's concern.
+//! caller, and replay policy belongs to the transport that sends and receives the messages.
 
 use core::fmt;
 use std::error::Error;

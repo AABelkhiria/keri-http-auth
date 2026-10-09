@@ -9,8 +9,7 @@
 //!
 //! The reference uses the browser `Headers` collection, which joins repeated fields with a comma
 //! and a space. A covered header that arrives twice therefore changes the bytes a signature commits
-//! to, silently and without either peer noticing. [`Headers`] refuses a duplicate name instead; see
-//! `PORTING.md` §9.
+//! to, silently and without either peer noticing. [`Headers`] refuses a duplicate name instead.
 
 use core::fmt;
 use std::error::Error;

@@ -15,8 +15,7 @@
 //!
 //! The format resembles an RFC 8941 structured-field list but is not one: a signage's leading
 //! `indexed="?1"` is a parameter with no bare item in front of it, so no conforming structured-
-//! field parser accepts it. `docs/adr/0010-signature-header-fields.md` records the decision to
-//! hand-write a strict parser rather than adopt a library.
+//! field parser accepts it, so the parser here is hand-written and strict rather than a library's.
 //!
 //! # Strictness
 //!
@@ -24,7 +23,7 @@
 //! and every space and control byte. The reference validates neither: a tag of `a";b="c` produces
 //! a header carrying a forged extra field, and a value of `val";indexed="?0` injects a second
 //! `indexed` flag into the signage that quoted it. Both are refused here at construction. The
-//! remaining divergences are listed in `PORTING.md` §9 and pinned by `fixtures/ending/`.
+//! remaining divergences are pinned by `fixtures/ending/`.
 
 use core::fmt;
 use std::borrow::Cow;
@@ -64,7 +63,7 @@ pub const INDEXED_FALSE: &str = "?0";
 ///
 /// Its first two entries, `false` and `0`, are a JavaScript boolean and number, which a string
 /// parsed out of a header can never equal — so `indexed="0"` is read as **true** upstream. That
-/// defect is pinned rather than reproduced; see `PORTING.md` §9.
+/// defect is pinned by `fixtures/ending/` rather than reproduced.
 const FALSE_FLAGS: [&str; 5] = [INDEXED_FALSE, "no", "false", "False", "off"];
 
 /// Every text the reference's `TRUTHY` table can match, in table order.
@@ -88,8 +87,8 @@ pub const MAX_FIELD_TEXT_BYTES: usize = 1024;
 ///
 /// The `signer`, `ordinal`, and `digest` parameters hold an identifier prefix, a sequence number,
 /// and a SAID respectively, but this crate deliberately does not type them as such: those types
-/// live in `signify-keri`, and `ARCHITECTURE.md` forbids `signify-http` depending on it. A caller
-/// that has them converts to text at this boundary.
+/// belong to the KERI event layer, which sits above this crate. A caller that has them converts to
+/// text at this boundary.
 ///
 /// ```
 /// use keri_http_auth::fields::FieldText;
@@ -789,7 +788,7 @@ fn parse_indexed_flag(value: &str) -> Result<bool, SignatureFieldError> {
         Ok(false)
     } else {
         // The reference treats everything outside its `FALSY` table as true, so a header saying
-        // `indexed="0"` or `indexed="maybe"` is read as indexed; see `PORTING.md` §9.
+        // `indexed="0"` or `indexed="maybe"` is read as indexed; `fixtures/ending/` pins it.
         Err(SignatureFieldError::InvalidIndexedFlag { found: bounded(value) })
     }
 }
