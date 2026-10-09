@@ -1,13 +1,16 @@
 [package]
 name = "keri-http-auth"
-version = "0.0.0"
+version = "0.1.0"
 description = "KERI HTTP message signatures and request authentication"
 edition = "2024"
 rust-version = "1.97"
-publish = false
 license = "Apache-2.0 OR MIT"
+repository = "https://github.com/AABelkhiria/keri-http-auth"
+documentation = "https://docs.rs/keri-http-auth"
+readme = "README.md"
 keywords = ["keri", "keria", "signify", "http", "signature"]
 categories = ["authentication", "web-programming"]
+exclude = [".github/", "tools/", "deny.toml", "rustfmt.toml", "rust-toolchain.toml", ".gitignore"]
 
 [dependencies]
 keri-cesr = { version = "0.1.0", features = ["crypto"] }
