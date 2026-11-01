@@ -9,8 +9,6 @@
 //! indexed="?1";signer="EGqH…";kind="CESR";0="AACs…";1="ABDs…"
 //! ```
 //!
-//! This module ports `signature` and `designature` from `src/keri/end/ending.ts`.
-//!
 //! # Why a dedicated parser
 //!
 //! The format resembles an RFC 8941 structured-field list but is not one: a signage's leading
@@ -20,10 +18,8 @@
 //! # Strictness
 //!
 //! Tags and values are validated [`FieldText`], which excludes the delimiters `"`, `;`, `,`, `=`
-//! and every space and control byte. The reference validates neither: a tag of `a";b="c` produces
-//! a header carrying a forged extra field, and a value of `val";indexed="?0` injects a second
-//! `indexed` flag into the signage that quoted it. Both are refused here at construction. The
-//! remaining divergences are pinned by `fixtures/ending/`.
+//! and every space and control byte, so neither can forge a field: a tag of `a";b="c` and a value
+//! of `val";indexed="?0` are both refused at construction.
 
 use core::fmt;
 use std::borrow::Cow;
@@ -59,21 +55,16 @@ pub const INDEXED_TRUE: &str = "?1";
 /// Wire spelling of a negative `indexed` flag.
 pub const INDEXED_FALSE: &str = "?0";
 
-/// Every text the reference's `FALSY` table can match, in table order.
-///
-/// Its first two entries, `false` and `0`, are a JavaScript boolean and number, which a string
-/// parsed out of a header can never equal — so `indexed="0"` is read as **true** upstream. That
-/// defect is pinned by `fixtures/ending/` rather than reproduced.
+/// Every accepted spelling of a false `indexed` flag.
 const FALSE_FLAGS: [&str; 5] = [INDEXED_FALSE, "no", "false", "False", "off"];
 
-/// Every text the reference's `TRUTHY` table can match, in table order.
+/// Every accepted spelling of a true `indexed` flag.
 const TRUE_FLAGS: [&str; 5] = [INDEXED_TRUE, "yes", "true", "True", "on"];
 
 /// Largest header value this module parses or produces, in bytes.
 ///
-/// The reference imposes no bound. A signage carrying three signatures is roughly 300 bytes, and
-/// common server limits for a single header are 8 KiB; this ceiling is deliberately generous while
-/// still bounding what an untrusted peer can make this module allocate.
+/// A signage carrying three signatures is roughly 300 bytes, and common server limits for a single
+/// header are 8 KiB, so this is generous while still bounding what a peer can make this allocate.
 pub const MAX_HEADER_BYTES: usize = 16 * 1024;
 
 /// Largest tag or parameter value, in bytes.
@@ -85,10 +76,8 @@ pub const MAX_FIELD_TEXT_BYTES: usize = 1024;
 /// exactly what the header grammar can carry unambiguously. Qualified CESR material, identifier
 /// prefixes, digests, and hexadecimal ordinals all satisfy it.
 ///
-/// The `signer`, `ordinal`, and `digest` parameters hold an identifier prefix, a sequence number,
-/// and a SAID respectively, but this crate deliberately does not type them as such: those types
-/// belong to the KERI event layer, which sits above this crate. A caller that has them converts to
-/// text at this boundary.
+/// The `signer`, `ordinal`, and `digest` parameters stay text here: their types belong to the KERI
+/// event layer above this crate.
 ///
 /// ```
 /// use keri_http_auth::fields::FieldText;
@@ -97,7 +86,7 @@ pub const MAX_FIELD_TEXT_BYTES: usize = 1024;
 /// let tag = FieldText::new("signify")?;
 /// assert_eq!(tag.as_str(), "signify");
 ///
-/// // A tag carrying a delimiter would forge extra header fields; the reference accepts it.
+/// // A tag carrying a delimiter would forge extra header fields.
 /// assert!(FieldText::new(r#"a";b="c"#).is_err());
 /// # Ok(())
 /// # }
@@ -174,7 +163,7 @@ const fn is_field_byte(byte: u8) -> bool {
 
 /// One indexed signature and the tag naming it.
 ///
-/// With no explicit tag the signature's own index is used, which is what the reference does.
+/// With no explicit tag the signature's own index is used.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct IndexedMarker {
     tag: Option<FieldText>,
@@ -226,8 +215,8 @@ impl IndexedMarker {
 
 /// One unindexed signature and the tag naming it.
 ///
-/// With no explicit tag the signature's verification key is used, which is what the reference
-/// does — so an unnamed marker must carry one.
+/// With no explicit tag the signature's verification key is used, so an unnamed marker must carry
+/// one.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct UnindexedMarker {
     tag: Option<FieldText>,
@@ -329,9 +318,7 @@ impl OpaqueMarker {
 
 /// The markers of one signage, which decide its `indexed` flag.
 ///
-/// The reference takes a separate `indexed` boolean and throws when it disagrees with the marker
-/// types — an indexed signature with `indexed` false, or an unindexed one with `indexed` true.
-/// Here the flag is derived from the markers, so the disagreement is unrepresentable.
+/// The flag is derived from the markers, so a signage cannot contradict them.
 #[derive(Clone, Debug, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum SignageMarkers {
@@ -567,8 +554,8 @@ impl SignageBuilder {
     /// # Errors
     ///
     /// Returns [`SignatureFieldError::NoMarkers`] for an empty signage, which asserts nothing;
-    /// [`SignatureFieldError::DuplicateField`] when two markers share a tag, where the reference
-    /// silently keeps the last; [`SignatureFieldError::ReservedTag`] when a tag would be read as a
+    /// [`SignatureFieldError::DuplicateField`] when two markers share a tag;
+    /// [`SignatureFieldError::ReservedTag`] when a tag would be read as a
     /// parameter; and [`SignatureFieldError::KindMismatch`] when the `kind` parameter and the
     /// marker kind disagree.
     pub fn build(self) -> Result<Signage, SignatureFieldError> {
@@ -687,8 +674,8 @@ impl SignatureHeader {
     /// Returns [`SignatureFieldError::HeaderTooLong`] above [`MAX_HEADER_BYTES`],
     /// [`SignatureFieldError::MalformedItem`] for an item that is not exactly one
     /// `name="value"` pair, [`SignatureFieldError::MissingIndexedField`] when a signage omits the
-    /// flag, [`SignatureFieldError::InvalidIndexedFlag`] for a flag outside the reference's own
-    /// tables, [`SignatureFieldError::DuplicateField`] for a repeated name, and layered
+    /// flag, [`SignatureFieldError::InvalidIndexedFlag`] for an unknown flag,
+    /// [`SignatureFieldError::DuplicateField`] for a repeated name, and layered
     /// [`SignatureFieldError::Crypto`] failures for signature material that does not parse.
     pub fn parse(value: &str) -> Result<Self, SignatureFieldError> {
         if value.len() > MAX_HEADER_BYTES {
@@ -731,7 +718,7 @@ fn parse_signage(value: &str) -> Result<Signage, SignatureFieldError> {
 
     let mut take = |field: &str| -> Option<String> {
         let position = items.iter().position(|(name, _)| name == field)?;
-        // The parameter names are removed so whatever remains is a marker, as upstream.
+        // Whatever remains after the parameter names is a marker.
         Some(items.remove(position).1)
     };
     let indexed = take(INDEXED_FIELD).ok_or(SignatureFieldError::MissingIndexedField)?;
@@ -768,8 +755,7 @@ fn parse_item(raw: &str) -> Result<(String, String), SignatureFieldError> {
     let (Some(name), Some(quoted)) = (parts.next(), parts.next()) else {
         return Err(SignatureFieldError::MalformedItem { item: bounded(raw) });
     };
-    // The reference splits with a limit that discards the remainder, so a value containing `=`
-    // is silently truncated; keripy keeps it. The two disagree, so it is refused here.
+    // Implementations disagree on a value containing `=`, so it is refused.
     let unquoted = quoted
         .strip_prefix('"')
         .and_then(|rest| rest.strip_suffix('"'))
@@ -780,15 +766,13 @@ fn parse_item(raw: &str) -> Result<(String, String), SignatureFieldError> {
     Ok((name.to_owned(), unquoted.to_owned()))
 }
 
-/// Reads the `indexed` flag from the reference's own tables.
+/// Reads the `indexed` flag.
 fn parse_indexed_flag(value: &str) -> Result<bool, SignatureFieldError> {
     if TRUE_FLAGS.contains(&value) {
         Ok(true)
     } else if FALSE_FLAGS.contains(&value) {
         Ok(false)
     } else {
-        // The reference treats everything outside its `FALSY` table as true, so a header saying
-        // `indexed="0"` or `indexed="maybe"` is read as indexed; `fixtures/ending/` pins it.
         Err(SignatureFieldError::InvalidIndexedFlag { found: bounded(value) })
     }
 }
@@ -875,7 +859,7 @@ pub enum SignatureFieldError {
     },
     /// A tag or value holds a byte the header grammar cannot carry.
     ///
-    /// The reference validates neither, so a delimiter in either forges header fields.
+    /// A delimiter in either would forge header fields.
     InvalidFieldText {
         /// Bounded copy of the rejected text.
         text: String,
@@ -889,7 +873,7 @@ pub enum SignatureFieldError {
     },
     /// A signage omits the required `indexed` flag.
     MissingIndexedField,
-    /// The `indexed` flag is outside the reference's own truth tables.
+    /// The `indexed` flag is not an accepted spelling.
     InvalidIndexedFlag {
         /// Bounded copy of the rejected flag.
         found: String,
@@ -996,7 +980,7 @@ mod tests {
     use super::*;
     use std::error::Error;
 
-    /// The three indexed signatures the pinned `test/end/ending.test.ts` asserts.
+    /// Three indexed signatures from the reference vectors.
     const SIGERS: [&str; 3] = [
         "AACsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN",
         "ABDs7m2-h5l7vpjYtbFXtksicpZK5Oclm43EOkE2xoQOfr08doj73VrlKZOKNfJmRumD3tfaiFFgVZqPgiHuFVoA",
@@ -1227,7 +1211,7 @@ mod tests {
 
     #[test]
     fn reserved_tags_are_refused() -> Result<(), Box<dyn Error>> {
-        // Upstream a marker tagged `signer` becomes the signer parameter and vanishes.
+        // Such a marker would be read as the parameter and vanish.
         let signature = IndexedSignature::from_qb64(SIGERS[0])?;
         for name in RESERVED_FIELDS {
             assert!(matches!(
@@ -1249,7 +1233,7 @@ mod tests {
     #[test]
     fn duplicate_tags_are_refused() -> Result<(), Box<dyn Error>> {
         let signature = IndexedSignature::from_qb64(SIGERS[0])?;
-        // Upstream the second silently replaces the first, dropping a signature.
+        // Keeping one would silently drop a signature.
         let markers = vec![IndexedMarker::new(signature.clone()), IndexedMarker::new(signature)];
         assert!(matches!(
             SignageBuilder::new(SignageMarkers::Indexed(markers)).build(),
@@ -1283,7 +1267,7 @@ mod tests {
             SignatureHeader::new(Vec::new()),
             Err(SignatureFieldError::NoSignages)
         ));
-        // Upstream both parse into a signage asserting nothing.
+        // A signage with no markers asserts nothing.
         assert!(matches!(
             SignatureHeader::parse(r#"indexed="?1""#),
             Err(SignatureFieldError::NoMarkers)
@@ -1296,15 +1280,13 @@ mod tests {
 
     #[test]
     fn malformed_items_are_typed_errors() {
-        // Upstream this dereferences undefined and throws a TypeError.
         for value in [
             r#"indexed="?1";garbage"#,
             r#"indexed="?1";0=missingquotes"#,
             r#"indexed="?1";0="unterminated"#,
             r#"indexed="?1";="novalue""#,
-            // A value containing `=` is truncated upstream and kept by keripy, so it is refused.
+            // Implementations disagree on a value containing `=`.
             r#"indexed="?1";0="a=b""#,
-            // Quotes are stripped from anywhere upstream, silently joining the pieces.
             r#"indexed="?1";0="a"b"c""#,
         ] {
             assert!(
@@ -1322,7 +1304,7 @@ mod tests {
     }
 
     #[test]
-    fn the_indexed_flag_accepts_only_the_reference_tables() -> Result<(), Box<dyn Error>> {
+    fn the_indexed_flag_accepts_only_known_spellings() -> Result<(), Box<dyn Error>> {
         for (flag, expected) in TRUE_FLAGS.map(|flag| (flag, true)).into_iter().chain(
             FALSE_FLAGS
                 .map(|flag| (flag, false))
@@ -1346,7 +1328,7 @@ mod tests {
                 .is_some_and(|signage| !signage.is_indexed())
         );
 
-        // Upstream reads every one of these as `true`, including the numeral meant to be false.
+        // Every one of these is refused rather than read as true.
         for flag in ["0", "1", "maybe", ""] {
             assert!(
                 matches!(
@@ -1361,8 +1343,7 @@ mod tests {
 
     #[test]
     fn whitespace_around_separators_is_tolerated() -> Result<(), Box<dyn Error>> {
-        // An intermediary merging repeated headers inserts a space after the comma; upstream
-        // removes only the first one it finds, corrupting every later tag.
+        // An intermediary merging repeated headers inserts a space after the comma.
         let spaced =
             format!(r#"indexed="?1"; 0="{}", indexed="?1";\t1="{}""#, SIGERS[0], SIGERS[1]).replace("\\t", "\t");
         let header = SignatureHeader::parse(&spaced)?;

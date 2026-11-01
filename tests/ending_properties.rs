@@ -124,7 +124,7 @@ proptest! {
     }
 
     /// Whitespace around the separators is normalization, not corruption: it never changes the
-    /// value parsed. Upstream every space after the first survives into a tag.
+    /// value parsed.
     #[test]
     fn whitespace_around_separators_never_changes_the_value(
         pad_comma in 0_usize..3,

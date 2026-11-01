@@ -23,9 +23,9 @@ Everything parsed from outside is assumed hostile: header names and values, `Sig
 `Signature-Input` header text, request methods and paths, covered-component lists, and signature
 material carried in a header.
 
-The sensitive material is the Ed25519 signer a `RequestSigner` holds. It is keri-cesr's `Signer`,
-which redacts its `Debug` output, exposes no raw-byte accessor and zeroes its buffer on drop; this
-crate never copies it out.
+The sensitive material is the Ed25519 signer a `RequestSigner` or `ResponseSigner` holds. It is
+keri-cesr's `Signer`, which redacts its `Debug` output, exposes no raw-byte accessor and zeroes its
+buffer on drop; this crate never copies it out.
 
 Given that, the implementation is built to hold up against a few specific things.
 
@@ -37,9 +37,14 @@ before it allocates from a size the input declares.
 
 The grammar is strict, because the signature base is built from what the headers say. Tags and
 values exclude every delimiter, so a header cannot be forged through a field; a repeated header
-name, a repeated signature label, an item without a value, and a flag outside the reference's own
-tables are all refused rather than normalized. A covered header that is absent is an error, never
-silently dropped from the base.
+name, a repeated signature label, an item without a value, and an unknown flag are all refused
+rather than normalized. When signing or reading a response, a covered header that is absent is an
+error, never silently dropped from the base.
+
+`RequestVerifier` is deliberately lenient, because it must accept what KERIA agents accept. A sender
+chooses its coverage, even none, so a valid signature can bind nothing beyond its own parameters, and
+an absent covered header adds no line. `keyid` is not read; the key comes only from `KeyLookup`.
+Its rejections share one `Display` text, so they are safe to show a peer.
 
 Signature verification goes through keri-cesr's Ed25519 verification and reports one typed error
 per failure. Only the `Signature-Input` that names the expected label is checked, and exactly one
@@ -52,14 +57,13 @@ nothing here reads a clock or a random source.
 
 ## Known limitations
 
-Replay is not detected here. `created` is handed back to the caller and freshness is the
-transport's policy; a correctly signed message is accepted whenever it was made.
+Replay is not detected by default. `ResponseVerifier` hands `created` back to the caller, and
+`RequestVerifier` accepts any `created` until it is given a `Freshness`.
 
-Only the client half exists: signing a request and verifying a response. Verifying a request and
-signing a response, which a KERIA agent needs, are not provided yet.
+`canonical_path` maps several raw paths to one, so they share a signature. A server must route on
+the canonical path, never the raw one.
 
-Interoperability is pinned to signify-ts. Where signify-ts and keripy disagree about the same
-header, both spellings are refused rather than one of them being chosen.
+Where Signify implementations disagree about a header's spelling, both spellings are refused.
 
 ## Dependencies
 

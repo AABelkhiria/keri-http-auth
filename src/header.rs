@@ -7,9 +7,8 @@
 //!
 //! # Why not a plain map
 //!
-//! The reference uses the browser `Headers` collection, which joins repeated fields with a comma
-//! and a space. A covered header that arrives twice therefore changes the bytes a signature commits
-//! to, silently and without either peer noticing. [`Headers`] refuses a duplicate name instead.
+//! Joining repeated fields with a comma would change the bytes a signature covers without either
+//! peer noticing, so [`Headers`] refuses a duplicate name instead.
 
 use core::fmt;
 use std::error::Error;
@@ -20,7 +19,7 @@ pub const MAX_HEADER_NAME_BYTES: usize = 128;
 
 /// Largest header value this module accepts, in bytes.
 ///
-/// Common server limits for a single header sit at 8 KiB; nothing KERIA sends approaches it.
+/// Common server limits for a single header sit at 8 KiB.
 pub const MAX_HEADER_VALUE_BYTES: usize = 8 * 1024;
 
 /// Largest number of headers one collection holds.
@@ -129,14 +128,12 @@ const fn is_token_byte(byte: u8) -> bool {
 
 /// One validated HTTP field value, with surrounding whitespace already removed.
 ///
-/// Leading and trailing spaces and tabs are stripped at construction, which is both what RFC 9110
-/// requires of a recipient and what the reference's `normalize` does before canonicalization — so
-/// the stored value is already the one a signature commits to.
+/// Leading and trailing spaces and tabs are stripped at construction, as RFC 9110 requires of a
+/// recipient, so the stored value is the one a signature commits to.
 ///
-/// The accepted scalar values are horizontal tab, `U+0020`–`U+007E`, and `U+00A0`–`U+00FF`. That is
-/// exactly what an HTTP field value can carry — the reference's field collection is a `ByteString`
-/// and refuses any code unit above `U+00FF` outright — minus the control characters, which would
-/// otherwise let a value forge a whole line in a signature base.
+/// The accepted scalar values are horizontal tab, `U+0020`–`U+007E`, and `U+00A0`–`U+00FF`: what an
+/// HTTP field value can carry, minus the control characters that could forge a line in a signature
+/// base.
 ///
 /// ```
 /// use keri_http_auth::header::HeaderValue;
@@ -263,11 +260,10 @@ impl Headers {
         Ok(headers)
     }
 
-    /// Collects what a server received, which must not fail on traffic it does not read.
+    /// Collects received headers without failing on ones the caller never reads.
     ///
     /// A pair this type cannot hold is dropped, every value of a repeated name is dropped, and
-    /// nothing past [`MAX_HEADERS`] is kept. A dropped header is therefore absent, so a request that
-    /// relies on one fails to authenticate.
+    /// nothing past [`MAX_HEADERS`] is kept. A dropped header reads as absent.
     #[must_use]
     pub fn received<'pair>(pairs: impl IntoIterator<Item = (&'pair str, &'pair str)>) -> Self {
         let mut headers = Self::new();
@@ -293,9 +289,8 @@ impl Headers {
     ///
     /// # Errors
     ///
-    /// Returns [`HeaderError::DuplicateHeader`] when the name is already present, ignoring case —
-    /// the reference joins the two values with a comma instead, which silently changes what a
-    /// signature covers — and [`HeaderError::TooManyHeaders`] above [`MAX_HEADERS`].
+    /// Returns [`HeaderError::DuplicateHeader`] when the name is already present, ignoring case,
+    /// and [`HeaderError::TooManyHeaders`] above [`MAX_HEADERS`].
     pub fn insert(&mut self, name: HeaderName, value: HeaderValue) -> Result<(), HeaderError> {
         if self.entries.len() >= MAX_HEADERS {
             return Err(HeaderError::TooManyHeaders { maximum: MAX_HEADERS });
@@ -500,9 +495,9 @@ mod tests {
                 "{value:?} was accepted",
             );
         }
-        // Latin-1 is what an HTTP field value can actually carry, and the reference accepts it.
+        // Latin-1 is what an HTTP field value can actually carry.
         assert_eq!(HeaderValue::new("héllo")?.as_str(), "héllo");
-        // Above Latin-1 the reference's own collection refuses the value outright.
+        // Nothing above Latin-1 can.
         assert!(matches!(
             HeaderValue::new("世界"),
             Err(HeaderError::InvalidValue { offset: 0, .. })
@@ -517,7 +512,7 @@ mod tests {
 
     #[test]
     fn duplicate_names_are_refused() -> Result<(), Box<dyn Error>> {
-        // The reference joins them with ", ", silently changing the signature base.
+        // Joining them would change the signature base.
         let mut headers = headers()?;
         assert!(matches!(
             headers.insert(HeaderName::new("signify-resource")?, HeaderValue::new("other")?),

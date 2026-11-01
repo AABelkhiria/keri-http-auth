@@ -3,7 +3,7 @@
 //! Every request a Signify client sends is canonicalized, signed, and gets two headers rendered;
 //! every response it receives is canonicalized again, parsed, and verified. Both sit on the hot
 //! path of the whole SDK, and both run over attacker-influenced content. The measured shapes are
-//! the ones KERIA traffic actually uses: the four components of `Authenticater.DefaultFields` over
+//! the common case: the four default components over
 //! a five-header message.
 
 use std::hint::black_box;
@@ -15,7 +15,7 @@ use keri_http_auth::authentication::{RequestSigner, ResponseVerifier};
 use keri_http_auth::header::{HeaderName, HeaderValue, Headers};
 use keri_http_auth::input::{RequestTarget, SignatureInputHeader, default_components};
 
-/// The headers a KERIA request carries, two of which the signature covers.
+/// The headers of a typical request, two of which the signature covers.
 const HEADERS: [(&str, &str); 5] = [
     ("Content-Type", "application/json"),
     ("Content-Length", "256"),

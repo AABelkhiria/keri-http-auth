@@ -16,7 +16,7 @@ use keri_http_auth::input::{
 };
 use libfuzzer_sys::fuzz_target;
 
-/// The agent key the pinned `test/core/authing.test.ts` response is verified against.
+/// The key the signed response below verifies against.
 const AGENT_KEY: &str = "DMZh_y-H5C3cSbZZST-fqnsmdNTReZxIh0t2xSTOJQ8a";
 
 /// The exact `Signature` header that response carries.

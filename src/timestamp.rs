@@ -1,19 +1,8 @@
 //! The `Signify-Timestamp` header value.
 //!
-//! The reference produces it with one expression in `SignifyClient.fetch`:
-//!
-//! ```text
-//! headers.set(HEADER_SIG_TIME, new Date().toISOString().replace('Z', '000+00:00'))
-//! ```
-//!
-//! `toISOString` yields millisecond precision, and replacing the `Z` appends three zeros — so the
-//! value always ends in `000` and **claims a microsecond precision it never had**. That is
-//! reproduced exactly, because the header is one of the four components a Signify signature covers
-//! and any other spelling would change the bytes the signature commits to.
-//!
-//! The value is a wire format, so it lives here beside the signature that covers it: keeping the
-//! two together lets both be built from a single clock reading. The clock itself stays outside,
-//! since a protocol crate never reads one. A caller supplies the time.
+//! The value is an ISO 8601 UTC time with six fractional digits and a written-out offset, such as
+//! `2022-09-24T00:05:48.196000+00:00`. It is one of the components a Signify signature covers, so its
+//! spelling is exact. A caller supplies the time; this crate never reads a clock.
 
 use core::fmt;
 use std::error::Error;
@@ -32,7 +21,7 @@ pub const MIN_YEAR: i64 = 1;
 /// See [`MIN_YEAR`].
 pub const MAX_YEAR: i64 = 9_999;
 
-/// A `Signify-Timestamp` value, rendered in the reference's own format.
+/// A `Signify-Timestamp` value.
 ///
 /// ```
 /// use core::time::Duration;
@@ -43,7 +32,7 @@ pub const MAX_YEAR: i64 = 9_999;
 /// let at = SystemTime::UNIX_EPOCH + Duration::from_millis(1_700_000_000_123);
 /// let stamp = SignifyTimestamp::at(at)?;
 ///
-/// // Millisecond precision, three appended zeros, and a written-out UTC offset.
+/// // Millisecond precision, padded to six digits, with a written-out UTC offset.
 /// assert_eq!(stamp.as_str(), "2023-11-14T22:13:20.123000+00:00");
 /// // The `created` parameter of the same signature is the whole second of the same reading.
 /// assert_eq!(stamp.created(), 1_700_000_000);
@@ -61,9 +50,8 @@ impl SignifyTimestamp {
     ///
     /// # Errors
     ///
-    /// Returns [`TimestampError::BeforeEpoch`] for a time before 1970, which the reference's own
-    /// `toISOString` would render with a negative year, and [`TimestampError::OutOfRange`] for a
-    /// year the four-digit format cannot hold.
+    /// Returns [`TimestampError::BeforeEpoch`] for a time before 1970 and
+    /// [`TimestampError::OutOfRange`] for a year the four-digit format cannot hold.
     pub fn at(moment: SystemTime) -> Result<Self, TimestampError> {
         let since_epoch = moment
             .duration_since(SystemTime::UNIX_EPOCH)
@@ -71,7 +59,7 @@ impl SignifyTimestamp {
         Self::from_unix(since_epoch)
     }
 
-    /// Renders the value for a duration since the Unix epoch.
+    /// Renders the value for a duration since the Unix epoch, at millisecond precision.
     ///
     /// # Errors
     ///
@@ -80,7 +68,7 @@ impl SignifyTimestamp {
         Self::render(since_epoch, since_epoch.subsec_millis().saturating_mul(1_000))
     }
 
-    /// Reads a time since the epoch at the microsecond precision KERIA's responses carry.
+    /// Renders the value for a duration since the Unix epoch, at microsecond precision.
     ///
     /// # Errors
     ///
@@ -104,8 +92,6 @@ impl SignifyTimestamp {
         let minute = (seconds_of_day % 3_600) / 60;
         let second = seconds_of_day % 60;
 
-        // Through `from_unix` the three trailing zeros are the reference's, not a rounding:
-        // `toISOString` has only milliseconds and `.replace('Z', '000+00:00')` pads the rest.
         let text = format!("{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}.{microseconds:06}+00:00");
         Ok(Self { text, created })
     }
@@ -117,9 +103,6 @@ impl SignifyTimestamp {
     }
 
     /// Returns the whole second of the same reading, which is a signature's `created` parameter.
-    ///
-    /// The reference derives this separately, from a *second* clock reading inside `siginput`, so
-    /// its header and its parameter can disagree by however long the two calls are apart.
     #[must_use]
     pub const fn created(&self) -> u64 {
         self.created
@@ -196,7 +179,7 @@ mod tests {
     }
 
     #[test]
-    fn the_reference_format_is_reproduced() -> Result<(), Box<dyn Error>> {
+    fn the_format_is_exact() -> Result<(), Box<dyn Error>> {
         for (milliseconds, expected) in [
             (1_700_000_000_123_u64, "2023-11-14T22:13:20.123000+00:00"),
             (0, "1970-01-01T00:00:00.000000+00:00"),
@@ -216,13 +199,12 @@ mod tests {
 
     #[test]
     fn the_value_always_ends_in_three_zeros() -> Result<(), Box<dyn Error>> {
-        // The reference has millisecond resolution and pads the rest; a caller with microseconds
-        // still gets the padded shape, because the header must read as the reference's.
+        // `from_unix` keeps milliseconds and pads the rest.
         for milliseconds in [0_u64, 1, 999, 1_000, 1_700_000_000_001] {
             let stamp = at(milliseconds)?;
             assert!(stamp.as_str().ends_with("000+00:00"), "{}", stamp.as_str());
         }
-        // Sub-millisecond precision is dropped, exactly as `toISOString` drops it.
+        // Sub-millisecond precision is dropped.
         let coarse = SignifyTimestamp::from_unix(Duration::from_nanos(1_700_000_000_123_999_999))?;
         assert_eq!(coarse.as_str(), "2023-11-14T22:13:20.123000+00:00");
         Ok(())

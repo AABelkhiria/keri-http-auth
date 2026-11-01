@@ -58,7 +58,7 @@ fuzz_target!(|data: &[u8]| {
         Err(error) => panic!("unexpected parse failure: {error}"),
     }
 
-    // 2. Tags come from callers and are the reference's injection vector: whatever this module
+    // 2. Tags come from callers and are an injection vector: whatever this module
     //    accepts must render a header with exactly one marker and no forged parameters.
     match FieldText::new(text) {
         Ok(tag) => {
