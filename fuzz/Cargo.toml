@@ -25,3 +25,10 @@ path = "fuzz_targets/authing.rs"
 test = false
 doc = false
 bench = false
+
+[[bin]]
+name = "server"
+path = "fuzz_targets/server.rs"
+test = false
+doc = false
+bench = false
