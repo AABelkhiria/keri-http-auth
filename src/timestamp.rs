@@ -77,8 +77,20 @@ impl SignifyTimestamp {
     ///
     /// Returns [`TimestampError::OutOfRange`] for a year the four-digit format cannot hold.
     pub fn from_unix(since_epoch: Duration) -> Result<Self, TimestampError> {
+        Self::render(since_epoch, since_epoch.subsec_millis().saturating_mul(1_000))
+    }
+
+    /// Reads a time since the epoch at the microsecond precision KERIA's responses carry.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`TimestampError::OutOfRange`] for a year the four-digit format cannot hold.
+    pub fn from_unix_micros(since_epoch: Duration) -> Result<Self, TimestampError> {
+        Self::render(since_epoch, since_epoch.subsec_micros())
+    }
+
+    fn render(since_epoch: Duration, microseconds: u32) -> Result<Self, TimestampError> {
         let created = since_epoch.as_secs();
-        let milliseconds = since_epoch.subsec_millis();
         let seconds = i64::try_from(created).map_err(|_| TimestampError::OutOfRange { year: i64::MAX })?;
 
         let days = seconds.div_euclid(86_400);
@@ -92,10 +104,9 @@ impl SignifyTimestamp {
         let minute = (seconds_of_day % 3_600) / 60;
         let second = seconds_of_day % 60;
 
-        // The three trailing zeros are the reference's, not a rounding: `toISOString` has only
-        // milliseconds and `.replace('Z', '000+00:00')` pads the rest.
-        let text =
-            format!("{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}.{milliseconds:03}000+00:00");
+        // Through `from_unix` the three trailing zeros are the reference's, not a rounding:
+        // `toISOString` has only milliseconds and `.replace('Z', '000+00:00')` pads the rest.
+        let text = format!("{year:04}-{month:02}-{day:02}T{hour:02}:{minute:02}:{second:02}.{microseconds:06}+00:00");
         Ok(Self { text, created })
     }
 

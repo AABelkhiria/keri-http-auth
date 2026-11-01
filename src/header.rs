@@ -263,6 +263,32 @@ impl Headers {
         Ok(headers)
     }
 
+    /// Collects what a server received, which must not fail on traffic it does not read.
+    ///
+    /// A pair this type cannot hold is dropped, every value of a repeated name is dropped, and
+    /// nothing past [`MAX_HEADERS`] is kept. A dropped header is therefore absent, so a request that
+    /// relies on one fails to authenticate.
+    #[must_use]
+    pub fn received<'pair>(pairs: impl IntoIterator<Item = (&'pair str, &'pair str)>) -> Self {
+        let mut headers = Self::new();
+        let mut repeated: Vec<HeaderName> = Vec::new();
+        for (name, value) in pairs {
+            let Ok(name) = HeaderName::new(name) else { continue };
+            if repeated.contains(&name) {
+                continue;
+            }
+            if let Some(position) = headers.entries.iter().position(|(existing, _)| *existing == name) {
+                headers.entries.remove(position);
+                repeated.push(name);
+                continue;
+            }
+            if let Ok(value) = HeaderValue::new(value) {
+                drop(headers.insert(name, value));
+            }
+        }
+        headers
+    }
+
     /// Adds one header.
     ///
     /// # Errors

@@ -17,7 +17,8 @@
 //! responses never holds signing capability.
 //!
 //! Freshness is deliberately not decided here: [`SignatureInput::created`] is returned to the
-//! caller, and replay policy belongs to the transport that sends and receives the messages.
+//! caller, and replay policy belongs to the transport that sends and receives the messages. The
+//! server's direction is in [`crate::server`].
 
 use core::fmt;
 use std::error::Error;
@@ -304,7 +305,7 @@ impl ResponseVerifier {
             })?;
 
         let signature_header = SignatureHeader::parse(signature_value)?;
-        let signature = self.find_signature(&signature_header)?;
+        let signature = find_signature(&signature_header, &self.label)?;
 
         let base = input.signature_base(target, headers)?;
         self.key
@@ -314,42 +315,45 @@ impl ResponseVerifier {
             })?;
         Ok(input.clone())
     }
+}
 
-    /// Finds the one signature written under this verifier's label.
-    fn find_signature<'header>(&self, header: &'header SignatureHeader) -> Result<&'header [u8], AuthenticationError> {
-        let label = self.label.as_str();
-        let mut found: Option<&[u8]> = None;
-        for signage in header.signages() {
-            let raw = match signage.markers() {
-                SignageMarkers::Indexed(markers) => markers
-                    .iter()
-                    .find(|marker| marker.tag() == label)
-                    .map(|marker| marker.signature().raw()),
-                SignageMarkers::Unindexed(markers) => {
-                    let mut matched = None;
-                    for marker in markers {
-                        if marker.tag()? == label {
-                            matched = Some(marker.signature().raw().as_slice());
-                            break;
-                        }
+/// Finds the one signature written under a label, searching every signage.
+pub(crate) fn find_signature<'header>(
+    header: &'header SignatureHeader,
+    label: &InputLabel,
+) -> Result<&'header [u8], AuthenticationError> {
+    let label = label.as_str();
+    let mut found: Option<&[u8]> = None;
+    for signage in header.signages() {
+        let raw = match signage.markers() {
+            SignageMarkers::Indexed(markers) => markers
+                .iter()
+                .find(|marker| marker.tag() == label)
+                .map(|marker| marker.signature().raw()),
+            SignageMarkers::Unindexed(markers) => {
+                let mut matched = None;
+                for marker in markers {
+                    if marker.tag()? == label {
+                        matched = Some(marker.signature().raw().as_slice());
+                        break;
                     }
-                    matched
                 }
-                // A non-CESR signage carries uninterpreted text, not signature material.
-                SignageMarkers::Opaque { .. } => None,
-            };
-            let Some(raw) = raw else { continue };
-            if found.is_some() {
-                return Err(AuthenticationError::AmbiguousSignature {
-                    label: label.to_owned(),
-                });
+                matched
             }
-            found = Some(raw);
+            // A non-CESR signage carries uninterpreted text, not signature material.
+            SignageMarkers::Opaque { .. } => None,
+        };
+        let Some(raw) = raw else { continue };
+        if found.is_some() {
+            return Err(AuthenticationError::AmbiguousSignature {
+                label: label.to_owned(),
+            });
         }
-        found.ok_or_else(|| AuthenticationError::SignatureNotFound {
-            label: label.to_owned(),
-        })
+        found = Some(raw);
     }
+    found.ok_or_else(|| AuthenticationError::SignatureNotFound {
+        label: label.to_owned(),
+    })
 }
 
 /// Stable request-authentication failures.
