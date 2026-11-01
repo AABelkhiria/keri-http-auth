@@ -1,0 +1,3441 @@
+{
+  "schema_version": 1,
+  "upstream": "https://github.com/WebOfTrust/keria.git",
+  "reference_sha": "928ce26a4dfcb802c0efa9b2810c53edd7920f59",
+  "reference_version": "0.4.1",
+  "keripy_version": "1.2.14",
+  "generated_on": "2026-10-31",
+  "sources": [
+    "src/keria/core/authing.py",
+    "src/keria/app/agenting.py",
+    "tests/core/test_authing.py",
+    "keri/end/ending.py"
+  ],
+  "generator": "tools/reference-vectors/keria_authing.py",
+  "input": {
+    "salt": "1111456789abcdef",
+    "controller": "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq",
+    "controller_kel": "{\"v\":\"KERI10JSON00012b_\",\"t\":\"icp\",\"d\":\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\",\"i\":\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\",\"s\":\"0\",\"kt\":\"1\",\"k\":[\"DAFFYufJkgED00EwDPDUfQ2jYT_kOkGKYRGYxySX_VjW\"],\"nt\":\"1\",\"n\":[\"EIWO4fg_5RpvrisR3MmQsLasj2YIxpF_Tq_iU9XrtjBd\"],\"bt\":\"0\",\"b\":[],\"c\":[],\"a\":[]}-AABAAC4B-IyQPkW6yxp52WwIr2vZej6cYnudN5lcnf0-M-BEghLUUowWFGTbYgnUd7hMkE1pPVtSa2XUtgTeY7cP4MG",
+    "agent": "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt",
+    "agent_verkey": "DKDhlTWVfELdh0IbjoZ-ox0PI3xxGyrKUvg31KPTedcG",
+    "agent_derivation": "Habery salt Salter(raw=salt).qb64, hab name agent-{controller}, namespace agent",
+    "unresolved_controller": "ELbpFmMh3eiK5rDj-_7L6e3Yk_CGxLVbhBopMh65gWXD",
+    "unresolved_agent_salt": "2222456789abcdef",
+    "aid_salt": "0123456789abcdef",
+    "aid_sxlt": "4CAYPIVrhdn16zfcHTS6HDg7a1gxaa6QbkTo9PMl3fKtmwNQG3XuJLT00WXUmnrCRBQycBZ8xgTNWTCOLVixV2ePlcsCrRYIkCvM",
+    "utc_now": "2021-01-01T00:00:00.000000+00:00",
+    "iso_now": "2021-06-27T21:26:21.233257+00:00",
+    "nonce": "A9XfpxIl1LcIkMhUSCCC8fgvkuX8gG9xK3SM-S8a8Y_U"
+  },
+  "reference_quirks": {
+    "replay_until_rotation": "A captured request verifies until the agent sees the controller rotate: the timestamp, `created` and `expires` are all unchecked.",
+    "sender_chooses_coverage": "Inbound verifies whichever fields Signature-Input lists, skipping absent headers and unknown `@` fields, so nothing requires any field to be covered.",
+    "malformed_headers_vary": "Only AuthNError, ValueError and UnicodeDecodeError become 401. Other exceptions from parsing a header escape the middleware as an unsigned 500.",
+    "unsigned_without_agent": "A response is signed only if authentication put an agent on the request, so 401s, those 500s, allowed paths and CORS preflights are unsigned; a handler's 404 is signed.",
+    "sealed_salt": "`sxlt` is a sealed box, fixed here; a real client's differs on every call.",
+    "path_is_requoted": "hio passes `quote(unquote(raw))` as the path, inbound verifies that, and outbound signs `quote(unquote(path))`. So `:` is verified as `%3A`, and a client must sign the same form.",
+    "server_headers": "hio adds `Server` and `Date` on a real socket; they are absent here."
+  },
+  "upstream_vectors": {
+    "request": {
+      "method": "POST",
+      "path": "/boot",
+      "headers": [
+        [
+          "Signify-Resource",
+          "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+        ],
+        [
+          "Signify-Timestamp",
+          "2022-09-24T00:05:48.196795+00:00"
+        ],
+        [
+          "Signature-Input",
+          "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+        ],
+        [
+          "Signature",
+          "indexed=\"?0\";signify=\"0BDBVr5ape8f9nV60ThhWOKvu5HKXQc5798Sz95FIoqXQ9vvL8HoYsLRp5aN86MIXr0GqH37SowsmTP-k9UhYSkN\""
+        ]
+      ],
+      "base": "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": POST\n\"@path\": /boot\n\"signify-timestamp\": 2022-09-24T00:05:48.196795+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+    },
+    "response": {
+      "headers": [
+        [
+          "connection",
+          "close"
+        ],
+        [
+          "content-length",
+          "256"
+        ],
+        [
+          "content-type",
+          "application/json"
+        ],
+        [
+          "signature",
+          "indexed=\"?0\";signify=\"0BBWiqPdnUjfwkDcFQQyUUjjATXp0mRgG7S9ikr_XZkp0Nbv77dY8syrdpJTLuU4gTfmMYJb4OIR5oN7K02CV_0I\""
+        ],
+        [
+          "signature-input",
+          "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+        ],
+        [
+          "signify-resource",
+          "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+        ],
+        [
+          "signify-timestamp",
+          "2021-01-01T00:00:00.000000+00:00"
+        ]
+      ],
+      "base": "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": POST\n\"@path\": /boot\n\"signify-timestamp\": 2021-01-01T00:00:00.000000+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+    }
+  },
+  "inbound_cases": [
+    {
+      "name": "accepted",
+      "note": "A correct signature.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "unsigned",
+      "note": "No signature headers at all.",
+      "authenticator": {
+        "error": "ValueError",
+        "message": "Missing SIGNATURE-INPUT header"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "missing_signature_input",
+      "note": "",
+      "authenticator": {
+        "error": "ValueError",
+        "message": "Missing SIGNATURE-INPUT header"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "missing_signature",
+      "note": "",
+      "authenticator": {
+        "error": "ValueError",
+        "message": "Missing SIGNATURE header"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "missing_resource",
+      "note": "",
+      "authenticator": {
+        "error": "ValueError",
+        "message": "Missing SIGNIFY-RESOURCE header"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "unknown_controller",
+      "note": "No agent for this resource.",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Unknown controller"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EAbcdefghijklmnopqrstuvwxyz0123456789-_ABCDE"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA5AnwfW-g1K1_2cwX0Bz_O1CmX--3QlJUwJDdZLKPdmSteiCEF8MPuYDWBc-KTHDczqoKhjwFsBtDZRV6L1bgC\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "unresolved_controller",
+      "note": "The agent has not seen the controller's KEL.",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Unknown or invalid controller (controller KEL not resolved)"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "ELbpFmMh3eiK5rDj-_7L6e3Yk_CGxLVbhBopMh65gWXD"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA3_QWCvFzha9hQqXdieuPXKa25WEzCleIiZ0ejbFAb3PCgumdCDh5qsl8fsqGoW7d2CN1n_rhMXYmAbmSNvLQO\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "other_label",
+      "note": "Inputs not labelled signify are ignored.",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Missing signify inputs in signature"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "notsignify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";notsignify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "flipped_signature",
+      "note": "",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Signature for Inputage(name='signify', fields=['signify-resource', '@method', '@path', 'signify-timestamp'], created=1609459200, keyid='EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq', alg='ed25519', expires=None, nonce=None, context=None) invalid"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccaAD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "changed_method",
+      "note": "Signed for GET, sent as POST.",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Signature for Inputage(name='signify', fields=['signify-resource', '@method', '@path', 'signify-timestamp'], created=1609459200, keyid='EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq', alg='ed25519', expires=None, nonce=None, context=None) invalid"
+      },
+      "exchange": {
+        "method": "POST",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": POST\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "changed_path",
+      "note": "Signed for /identifiers, sent to /operations.",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Signature for Inputage(name='signify', fields=['signify-resource', '@method', '@path', 'signify-timestamp'], created=1609459200, keyid='EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq', alg='ed25519', expires=None, nonce=None, context=None) invalid"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/operations",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /operations\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "changed_timestamp",
+      "note": "",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Signature for Inputage(name='signify', fields=['signify-resource', '@method', '@path', 'signify-timestamp'], created=1609459200, keyid='EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq', alg='ed25519', expires=None, nonce=None, context=None) invalid"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-01-01T00:00:00.000000+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-01-01T00:00:00.000000+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_input_unparsable",
+      "note": "",
+      "authenticator": {
+        "error": "ValueError",
+        "message": ""
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "((("
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_input_empty",
+      "note": "",
+      "authenticator": {
+        "error": "ValueError",
+        "message": ""
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            ""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_input_bare_token",
+      "note": "`desiginput` raises TypeError.",
+      "authenticator": {
+        "error": "TypeError",
+        "message": "'Item' object is not iterable"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "garbage"
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 500,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "content-length",
+            "38"
+          ]
+        ],
+        "response_body": "{\"title\": \"500 Internal Server Error\"}",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_input_integer",
+      "note": "`desiginput` raises TypeError.",
+      "authenticator": {
+        "error": "TypeError",
+        "message": "'Item' object is not iterable"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=1"
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 500,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "content-length",
+            "38"
+          ]
+        ],
+        "response_body": "{\"title\": \"500 Internal Server Error\"}",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_bare_token",
+      "note": "",
+      "authenticator": {
+        "error": "ValueError",
+        "message": "not enough values to unpack (expected 2, got 1)"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "garbage"
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_without_marker",
+      "note": "KeyError.",
+      "authenticator": {
+        "error": "KeyError",
+        "message": "'signify'"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\""
+          ]
+        ],
+        "request_body": null,
+        "status": 500,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "content-length",
+            "38"
+          ]
+        ],
+        "response_body": "{\"title\": \"500 Internal Server Error\"}",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_bad_marker",
+      "note": "UnexpectedCodeError.",
+      "authenticator": {
+        "error": "UnexpectedCodeError",
+        "message": "Unsupported code =g."
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"garbage\""
+          ]
+        ],
+        "request_body": null,
+        "status": 500,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "content-length",
+            "38"
+          ]
+        ],
+        "response_body": "{\"title\": \"500 Internal Server Error\"}",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "signature_empty_marker",
+      "note": "ShortageError.",
+      "authenticator": {
+        "error": "ShortageError",
+        "message": "Empty material."
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"\""
+          ]
+        ],
+        "request_body": null,
+        "status": 500,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "content-length",
+            "38"
+          ]
+        ],
+        "response_body": "{\"title\": \"500 Internal Server Error\"}",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "stale_timestamp",
+      "note": "The timestamp is signed but its age is never checked.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2001-01-01T00:00:00.000000+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BCC7I5TMjpUk7EUkhLHB9ClLiygMoX8wvtcZGObwg6BNMqhbNXhFMtTbsGuCOWeBt8_xoQULs3wAXawj_9E2TcB\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2001-01-01T00:00:00.000000+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "expired_input",
+      "note": "`expires` is signed but never enforced.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;expires=\"2001-01-01T00:00:00.000000+00:00\";keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BADsxqe7lDLqGB-iU5P2_4GmvYGPuhngGjXMg2epr-EdGLvvm7Vh4S329WZvHJfSp1TG_dxtfWAif_DB3F6UU4L\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;expires=2001-01-01T00:00:00.000000+00:00;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "method_only_coverage",
+      "note": "A signature need not cover the path.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"@method\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BB8oRneTxMrkJR_-9yVK3F4A-Vpw_GocDvRbnoz2RNh9PzW2rUNK6s91bYAOyw5ZQuE44VlFh1kT0sOdVrC-EEE\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"@method\": GET\n\"@signature-params: (@method);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "no_coverage",
+      "note": "An empty field list signs only the parameters.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=();created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA3KjfvFZ54z-tuaNCeYs6JyoSmqY2WKWHNEz66CYoXfl9trCNqQX1IMaK3tk-N0FHWPddbtDOlVMqa8HPD4OoP\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"@signature-params: ();created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "absent_header_covered",
+      "note": "A listed header that is absent is skipped.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"@method\" \"x-absent\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BB92B1sMjMIfti3WJ0e_Cm0qVFUrALmNN4lPkWKA3LvxyGcD3SNZDShQv0s6deC_VcU-G-u2kIZ3xdeJqKt7QEG\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"@method\": GET\n\"@signature-params: (@method x-absent);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "unknown_derived_field_covered",
+      "note": "An unknown `@` field is skipped.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"@method\" \"@authority\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BC93A5VOvK6D4OASOLhoWtpzaQ-hST6DfTC1WujwUfU_cWz54NRwJv_aDoNWtbbUcnfHHwRoKMS6Oc0EG3PhTUB\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"@method\": GET\n\"@signature-params: (@method @authority);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "query_not_covered",
+      "note": "`@path` excludes the query string.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": "limit=1",
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "2"
+          ]
+        ],
+        "response_body": "[]",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "path_space_signed_quoted",
+      "note": "Authenticated: the 404 is the handler's.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers/a%20b",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BDrm-M_mzr0i0k9miVXoWmVhjafihulKkvxOQPK1azw7qlE5OxLbCeYKLTNJjCD3E4wBFeR-Qaw34aj_8jyXDQK\""
+          ]
+        ],
+        "request_body": null,
+        "status": 404,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BBB7sxfEh2TkctPqJRqxYGNJr8qJECSI7rw0saBQVBMfJj68n7KXTWfIR1S0op8hOI_WRYkIXELS3RfVCb4floL\""
+          ],
+          [
+            "content-length",
+            "89"
+          ]
+        ],
+        "response_body": "{\"title\": \"404 Not Found\", \"description\": \"a b is not a valid identifier name or prefix\"}",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers/a%20b\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers/a%20b\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "path_space_signed_decoded",
+      "note": "",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Signature for Inputage(name='signify', fields=['signify-resource', '@method', '@path', 'signify-timestamp'], created=1609459200, keyid='EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq', alg='ed25519', expires=None, nonce=None, context=None) invalid"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers/a%20b",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BDv1bozaZsYGFV6nrxOpXT3E7_RSi1nMBdTIlHkeHsVI6P_jZvlx6ESImYEjDMU3HxYuk7SoGNuBI41npcnFDAK\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers/a%20b\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "path_colon_signed_quoted",
+      "note": "Authenticated: `:` is quoted before verification.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers/a:b",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BB3xEPsQWHuagf3DC-Mi8VQKEpwA-IVgVDWkcZycPFr6RXIw9F9jakJN5vjycacM2JFAN2ZRjClpByUZZC4jDsE\""
+          ]
+        ],
+        "request_body": null,
+        "status": 404,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BAxSauZNsy5pslnlYAb8RCD8Ds_Wkac5_KelQYgJBo4O7GQQxXNkr0ZUt0va3AbWORjWMw5qYQ3u5g4sYOuapAJ\""
+          ],
+          [
+            "content-length",
+            "89"
+          ]
+        ],
+        "response_body": "{\"title\": \"404 Not Found\", \"description\": \"a:b is not a valid identifier name or prefix\"}",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers/a%3Ab\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers/a%3Ab\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    },
+    {
+      "name": "path_colon_signed_as_sent",
+      "note": "",
+      "authenticator": {
+        "error": "AuthNError",
+        "message": "Signature for Inputage(name='signify', fields=['signify-resource', '@method', '@path', 'signify-timestamp'], created=1609459200, keyid='EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq', alg='ed25519', expires=None, nonce=None, context=None) invalid"
+      },
+      "exchange": {
+        "method": "GET",
+        "path": "/identifiers/a:b",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BBxHdK2b_CkzM28b8jN5-1lNVOG80scu8Qqb6is2nICewlXi6YamjMcbV7H8fh48x6STuhTSNXye7oyQC-jdpcL\""
+          ]
+        ],
+        "request_body": null,
+        "status": 401,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers/a%3Ab\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "allowed_path",
+      "note": "/agent bypasses authentication.",
+      "authenticator": null,
+      "exchange": {
+        "method": "GET",
+        "path": "/agent/EAbcdefghijklmnopqrstuvwxyz0123456789-_ABCDE",
+        "query": null,
+        "request_headers": [],
+        "request_body": null,
+        "status": 404,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "vary",
+            "Accept"
+          ],
+          [
+            "content-length",
+            "120"
+          ]
+        ],
+        "response_body": "{\"title\": \"404 Not Found\", \"description\": \"not agent found for controller EAbcdefghijklmnopqrstuvwxyz0123456789-_ABCDE\"}",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    },
+    {
+      "name": "cors_preflight",
+      "note": "`HandleCORS` answers OPTIONS before authentication runs.",
+      "authenticator": null,
+      "exchange": {
+        "method": "OPTIONS",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-length",
+            "0"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "response_body": "",
+        "verified_bases": [],
+        "signed_bases": []
+      }
+    }
+  ],
+  "identifier_lifecycle": {
+    "exchanges": [
+      {
+        "method": "POST",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BB9_Y710FphwFRlRT3Cx8ezRnPql7_edbumvhEfVoBEbDkXKxOASXOUTMePUkgIo_mAEyGsDKnM5ceSA7ZfJGsD\""
+          ],
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "request_body": "{\"name\":\"aid1\",\"icp\":{\"v\":\"KERI10JSON00012b_\",\"t\":\"icp\",\"d\":\"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\",\"i\":\"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\",\"s\":\"0\",\"kt\":\"1\",\"k\":[\"DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8\"],\"nt\":\"1\",\"n\":[\"EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-\"],\"bt\":\"0\",\"b\":[],\"c\":[],\"a\":[]},\"sigs\":[\"AABel4gPUz7PqB6VvM9pKdD_e1ZTVBDKTP0DxusuquRGnhrMpfI9cFt4SYDI5PvfYdjQ3TaNRpuR7iyD3pcuPCQO\"],\"salty\":{\"stem\":\"signify:aid\",\"pidx\":0,\"tier\":\"low\",\"sxlt\":\"4CAYPIVrhdn16zfcHTS6HDg7a1gxaa6QbkTo9PMl3fKtmwNQG3XuJLT00WXUmnrCRBQycBZ8xgTNWTCOLVixV2ePlcsCrRYIkCvM\",\"transferable\":true,\"kidx\":0,\"icodes\":[\"A\"],\"ncodes\":[\"A\"]}}",
+        "status": 202,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BBlEsxvwjkHNE3P5QtOSnGloaBYVDdddovqhvamcZQdk3PVBb_2u1zFtPjxu48RQiQVwYF0thMHFxvdjUW0i1IA\""
+          ],
+          [
+            "content-length",
+            "820"
+          ]
+        ],
+        "response_body": "{\"name\": \"done.EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"metadata\": {\"pre\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"response\": {\"v\": \"KERI10JSON00012b_\", \"t\": \"icp\", \"d\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"i\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"s\": \"0\", \"kt\": \"1\", \"k\": [\"DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8\"], \"nt\": \"1\", \"n\": [\"EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-\"], \"bt\": \"0\", \"b\": [], \"c\": [], \"a\": []}}, \"response\": {\"v\": \"KERI10JSON00012b_\", \"t\": \"icp\", \"d\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"i\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"s\": \"0\", \"kt\": \"1\", \"k\": [\"DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8\"], \"nt\": \"1\", \"n\": [\"EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-\"], \"bt\": \"0\", \"b\": [], \"c\": [], \"a\": []}, \"done\": true}",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": POST\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\"",
+          "{\"v\":\"KERI10JSON00012b_\",\"t\":\"icp\",\"d\":\"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\",\"i\":\"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\",\"s\":\"0\",\"kt\":\"1\",\"k\":[\"DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8\"],\"nt\":\"1\",\"n\":[\"EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-\"],\"bt\":\"0\",\"b\":[],\"c\":[],\"a\":[]}"
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": POST\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/operations/done.EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BCXThdd2j4mE2dEvcses12X1MLSbbGwwwjPXgJ1s2Iqe9hexgQ-GxiW75o5tgUWMZPRDvA6DcbTP40PyoQwNFML\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BDKFgs1kCldGktlKTO9rBhVQdlJz_4FIKOI1rb50DCiRIAK8JrxstYY76FGKfp-cCSQSMHT2xh1J5wg7ElfJ5gK\""
+          ],
+          [
+            "content-length",
+            "820"
+          ]
+        ],
+        "response_body": "{\"name\": \"done.EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"metadata\": {\"pre\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"response\": {\"v\": \"KERI10JSON00012b_\", \"t\": \"icp\", \"d\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"i\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"s\": \"0\", \"kt\": \"1\", \"k\": [\"DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8\"], \"nt\": \"1\", \"n\": [\"EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-\"], \"bt\": \"0\", \"b\": [], \"c\": [], \"a\": []}}, \"response\": {\"v\": \"KERI10JSON00012b_\", \"t\": \"icp\", \"d\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"i\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"s\": \"0\", \"kt\": \"1\", \"k\": [\"DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8\"], \"nt\": \"1\", \"n\": [\"EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-\"], \"bt\": \"0\", \"b\": [], \"c\": [], \"a\": []}, \"done\": true}",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /operations/done.EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /operations/done.EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/identifiers",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "accept-ranges",
+            "aids"
+          ],
+          [
+            "content-range",
+            "aids 0-0/1"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+          ],
+          [
+            "content-length",
+            "375"
+          ]
+        ],
+        "response_body": "[{\"name\": \"aid1\", \"prefix\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"salty\": {\"sxlt\": \"4CAYPIVrhdn16zfcHTS6HDg7a1gxaa6QbkTo9PMl3fKtmwNQG3XuJLT00WXUmnrCRBQycBZ8xgTNWTCOLVixV2ePlcsCrRYIkCvM\", \"pidx\": 0, \"kidx\": 0, \"stem\": \"signify:aid\", \"tier\": \"low\", \"dcode\": \"E\", \"icodes\": [\"A\"], \"ncodes\": [\"A\"], \"transferable\": true}, \"icp_dt\": \"2021-06-27T21:26:21.233257+00:00\"}]",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    ],
+    "state": {
+      "key_states": {
+        "BEumjKvulrhjHGOnXFi3oV76iFPo2KxoKPLJB6fThcJO": {
+          "state": {
+            "vn": [
+              1,
+              0
+            ],
+            "i": "BEumjKvulrhjHGOnXFi3oV76iFPo2KxoKPLJB6fThcJO",
+            "s": "0",
+            "p": "",
+            "d": "EBLEhpsuvdkxuw03QNEZY578keK-7EE9DnwuskacnmwX",
+            "f": "0",
+            "dt": "2021-06-27T21:26:21.233257+00:00",
+            "et": "icp",
+            "kt": "1",
+            "k": [
+              "BEumjKvulrhjHGOnXFi3oV76iFPo2KxoKPLJB6fThcJO"
+            ],
+            "nt": "0",
+            "n": [],
+            "bt": "0",
+            "b": [],
+            "c": [],
+            "ee": {
+              "s": "0",
+              "d": "EBLEhpsuvdkxuw03QNEZY578keK-7EE9DnwuskacnmwX",
+              "br": [],
+              "ba": []
+            },
+            "di": ""
+          },
+          "events": [
+            {
+              "said": "EBLEhpsuvdkxuw03QNEZY578keK-7EE9DnwuskacnmwX",
+              "sigs": [
+                "AACajeW82EbE55m1W20p9MP5ll1q2031YM69T6eGbGXelmORr_Eav-TxQI3-zsogDj0InHngzwS0UZ5WPw_4fpEA"
+              ]
+            }
+          ]
+        },
+        "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt": {
+          "state": {
+            "vn": [
+              1,
+              0
+            ],
+            "i": "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt",
+            "s": "0",
+            "p": "",
+            "d": "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt",
+            "f": "0",
+            "dt": "2021-06-27T21:26:21.233257+00:00",
+            "et": "dip",
+            "kt": "1",
+            "k": [
+              "DKDhlTWVfELdh0IbjoZ-ox0PI3xxGyrKUvg31KPTedcG"
+            ],
+            "nt": "1",
+            "n": [
+              "EN_ozhysfgW6e9TI8W_CYxTxUrw5VMkiohKmnSUd9MzQ"
+            ],
+            "bt": "0",
+            "b": [],
+            "c": [],
+            "ee": {
+              "s": "0",
+              "d": "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt",
+              "br": [],
+              "ba": []
+            },
+            "di": "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          },
+          "events": [
+            {
+              "said": "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt",
+              "sigs": [
+                "AAAYMiF71siBMD-odD8kSJg-TrHTneDH1g2SvORAVO8U_GggDA6m9gpYJc16yQgsUiu5TPXB-bMWVEasJyDcw84L"
+              ]
+            }
+          ]
+        },
+        "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY": {
+          "state": {
+            "vn": [
+              1,
+              0
+            ],
+            "i": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+            "s": "0",
+            "p": "",
+            "d": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+            "f": "0",
+            "dt": "2021-06-27T21:26:21.233257+00:00",
+            "et": "icp",
+            "kt": "1",
+            "k": [
+              "DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8"
+            ],
+            "nt": "1",
+            "n": [
+              "EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-"
+            ],
+            "bt": "0",
+            "b": [],
+            "c": [],
+            "ee": {
+              "s": "0",
+              "d": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+              "br": [],
+              "ba": []
+            },
+            "di": ""
+          },
+          "events": [
+            {
+              "said": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+              "sigs": [
+                "AABel4gPUz7PqB6VvM9pKdD_e1ZTVBDKTP0DxusuquRGnhrMpfI9cFt4SYDI5PvfYdjQ3TaNRpuR7iyD3pcuPCQO"
+              ]
+            }
+          ]
+        },
+        "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq": {
+          "state": {
+            "vn": [
+              1,
+              0
+            ],
+            "i": "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq",
+            "s": "0",
+            "p": "",
+            "d": "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq",
+            "f": "0",
+            "dt": "2021-06-27T21:26:21.233257+00:00",
+            "et": "icp",
+            "kt": "1",
+            "k": [
+              "DAFFYufJkgED00EwDPDUfQ2jYT_kOkGKYRGYxySX_VjW"
+            ],
+            "nt": "1",
+            "n": [
+              "EIWO4fg_5RpvrisR3MmQsLasj2YIxpF_Tq_iU9XrtjBd"
+            ],
+            "bt": "0",
+            "b": [],
+            "c": [],
+            "ee": {
+              "s": "0",
+              "d": "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq",
+              "br": [],
+              "ba": []
+            },
+            "di": ""
+          },
+          "events": [
+            {
+              "said": "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq",
+              "sigs": [
+                "AAC4B-IyQPkW6yxp52WwIr2vZej6cYnudN5lcnf0-M-BEghLUUowWFGTbYgnUd7hMkE1pPVtSa2XUtgTeY7cP4MG"
+              ]
+            }
+          ]
+        }
+      },
+      "escrows": {
+        "ooes": 0,
+        "pses": 0,
+        "pwes": 0,
+        "pdes": 0,
+        "uwes": 0,
+        "ures": 0,
+        "vres": 0,
+        "ldes": 0,
+        "qnfs": 0,
+        "misfits": 0,
+        "delegables": 0,
+        "udes": 0,
+        "rpes": 0,
+        "epse": 0,
+        "dpwe": 0,
+        "dune": 0,
+        "dpub": 0,
+        "gpwe": 0,
+        "gdee": 0,
+        "gpse": 0,
+        "eoobi": 0
+      },
+      "operations": [
+        [
+          [
+            "done",
+            "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY"
+          ],
+          {
+            "oid": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+            "type": "done",
+            "start": "2021-06-27T21:26:21.233257+00:00",
+            "metadata": {
+              "pre": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+              "response": {
+                "v": "KERI10JSON00012b_",
+                "t": "icp",
+                "d": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+                "i": "EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY",
+                "s": "0",
+                "kt": "1",
+                "k": [
+                  "DDNGgXzEO4LD8G1z1uD7eIDF2pDj6Y7hVx-nqhYZmU_8"
+                ],
+                "nt": "1",
+                "n": [
+                  "EHj7rmVHVkQKqnfeer068PiYvYm-WFSTVZZpFGsClfT-"
+                ],
+                "bt": "0",
+                "b": [],
+                "c": [],
+                "a": []
+              }
+            }
+          }
+        ]
+      ]
+    }
+  },
+  "pending_query": {
+    "exchanges": [
+      {
+        "method": "POST",
+        "path": "/queries",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BAoKpfxj9IWPgUMUPAqcT6iviAD3olvfYyRVtR_rKNOHd_sJtW7DFpQdiErfguLvLd7xZdaw6arBHwEnZ5L8ksE\""
+          ],
+          [
+            "Content-Type",
+            "application/json"
+          ]
+        ],
+        "request_body": "{\"pre\":\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\",\"sn\":\"1\"}",
+        "status": 202,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BChbROApML-Nl7da_mSwIh7WKE4IuoLozXofj1w_INaHzbRAOwS0QmTvMJfvwE-iZlJww77H8A6DU-St0N65rMC\""
+          ],
+          [
+            "content-length",
+            "159"
+          ]
+        ],
+        "response_body": "{\"name\": \"query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1\", \"metadata\": {\"pre\": \"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\", \"sn\": \"1\"}, \"done\": false}",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": POST\n\"@path\": /queries\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": POST\n\"@path\": /queries\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/operations/query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BD7Gf5Z5eDbY9yGwki_CjHovWhl9zUMqsdOKiGcxuZE9vOldFdwDucQeup3fM9Tzsu59_yzXTKaPU-8Iocoyt0A\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BBAf21Cp122iqrtkBQyADWRFNkCe7v2mKuJRDq-QMDfiRQS6dNOwdWqIvTeJwQZb9RmAtESYgN9LDWwKlXBIzoI\""
+          ],
+          [
+            "content-length",
+            "159"
+          ]
+        ],
+        "response_body": "{\"name\": \"query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1\", \"metadata\": {\"pre\": \"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\", \"sn\": \"1\"}, \"done\": false}",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /operations/query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /operations/query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/operations/query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1",
+        "query": null,
+        "request_headers": [
+          [
+            "Signify-Resource",
+            "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+          ],
+          [
+            "Signify-Timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "Signature-Input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+          ],
+          [
+            "Signature",
+            "indexed=\"?0\";signify=\"0BD7Gf5Z5eDbY9yGwki_CjHovWhl9zUMqsdOKiGcxuZE9vOldFdwDucQeup3fM9Tzsu59_yzXTKaPU-8Iocoyt0A\""
+          ]
+        ],
+        "request_body": null,
+        "status": 200,
+        "response_headers": [
+          [
+            "access-control-allow-origin",
+            "*"
+          ],
+          [
+            "access-control-allow-methods",
+            "*"
+          ],
+          [
+            "access-control-allow-headers",
+            "*"
+          ],
+          [
+            "access-control-expose-headers",
+            "*"
+          ],
+          [
+            "access-control-max-age",
+            "1728000"
+          ],
+          [
+            "content-type",
+            "application/json"
+          ],
+          [
+            "signify-resource",
+            "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+          ],
+          [
+            "signify-timestamp",
+            "2021-06-27T21:26:21.233257+00:00"
+          ],
+          [
+            "signature-input",
+            "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+          ],
+          [
+            "signature",
+            "indexed=\"?0\";signify=\"0BBAf21Cp122iqrtkBQyADWRFNkCe7v2mKuJRDq-QMDfiRQS6dNOwdWqIvTeJwQZb9RmAtESYgN9LDWwKlXBIzoI\""
+          ],
+          [
+            "content-length",
+            "682"
+          ]
+        ],
+        "response_body": "{\"name\": \"query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1\", \"metadata\": {\"pre\": \"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\", \"sn\": \"1\"}, \"response\": {\"vn\": [1, 0], \"i\": \"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\", \"s\": \"1\", \"p\": \"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\", \"d\": \"EP6r4eGYauguh-KF5sqv9t6UEhD0Buls4j5cIEyRC2ot\", \"f\": \"1\", \"dt\": \"2021-06-27T21:26:21.233257+00:00\", \"et\": \"ixn\", \"kt\": \"1\", \"k\": [\"DAFFYufJkgED00EwDPDUfQ2jYT_kOkGKYRGYxySX_VjW\"], \"nt\": \"1\", \"n\": [\"EIWO4fg_5RpvrisR3MmQsLasj2YIxpF_Tq_iU9XrtjBd\"], \"bt\": \"0\", \"b\": [], \"c\": [], \"ee\": {\"s\": \"0\", \"d\": \"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\", \"br\": [], \"ba\": []}, \"di\": \"\"}, \"done\": true}",
+        "verified_bases": [
+          "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /operations/query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+        ],
+        "signed_bases": [
+          "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /operations/query.EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq.1\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+        ]
+      }
+    ],
+    "controller_events": [
+      "{\"v\":\"KERI10JSON0000cb_\",\"t\":\"ixn\",\"d\":\"EP6r4eGYauguh-KF5sqv9t6UEhD0Buls4j5cIEyRC2ot\",\"i\":\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\",\"s\":\"1\",\"p\":\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\",\"a\":[]}-AABAAC-1Vev2CPM51ttWvYfw5bj-RQCKtdzkMT6F4LlbM_O8PWixgUDn0tqaOjWu4xtB8-0AEp4Mf1IaA6QGVNANHAD"
+    ]
+  },
+  "controller_rotation": {
+    "before": {
+      "method": "GET",
+      "path": "/identifiers",
+      "query": null,
+      "request_headers": [
+        [
+          "Signify-Resource",
+          "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+        ],
+        [
+          "Signify-Timestamp",
+          "2021-06-27T21:26:21.233257+00:00"
+        ],
+        [
+          "Signature-Input",
+          "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+        ],
+        [
+          "Signature",
+          "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+        ]
+      ],
+      "request_body": null,
+      "status": 200,
+      "response_headers": [
+        [
+          "access-control-allow-origin",
+          "*"
+        ],
+        [
+          "access-control-allow-methods",
+          "*"
+        ],
+        [
+          "access-control-allow-headers",
+          "*"
+        ],
+        [
+          "access-control-expose-headers",
+          "*"
+        ],
+        [
+          "access-control-max-age",
+          "1728000"
+        ],
+        [
+          "accept-ranges",
+          "aids"
+        ],
+        [
+          "content-range",
+          "aids 0-0/1"
+        ],
+        [
+          "content-type",
+          "application/json"
+        ],
+        [
+          "signify-resource",
+          "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+        ],
+        [
+          "signify-timestamp",
+          "2021-06-27T21:26:21.233257+00:00"
+        ],
+        [
+          "signature-input",
+          "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+        ],
+        [
+          "signature",
+          "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+        ],
+        [
+          "content-length",
+          "375"
+        ]
+      ],
+      "response_body": "[{\"name\": \"aid1\", \"prefix\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"salty\": {\"sxlt\": \"4CAYPIVrhdn16zfcHTS6HDg7a1gxaa6QbkTo9PMl3fKtmwNQG3XuJLT00WXUmnrCRBQycBZ8xgTNWTCOLVixV2ePlcsCrRYIkCvM\", \"pidx\": 0, \"kidx\": 0, \"stem\": \"signify:aid\", \"tier\": \"low\", \"dcode\": \"E\", \"icodes\": [\"A\"], \"ncodes\": [\"A\"], \"transferable\": true}, \"icp_dt\": \"2021-06-27T21:26:21.233257+00:00\"}]",
+      "verified_bases": [
+        "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+      ],
+      "signed_bases": [
+        "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+      ]
+    },
+    "event": "{\"v\":\"KERI10JSON000160_\",\"t\":\"rot\",\"d\":\"EBQni_Tl19AooHqjFs7qrzHKOcrsOI_Sf3xdInVTPoAs\",\"i\":\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\",\"s\":\"2\",\"p\":\"EP6r4eGYauguh-KF5sqv9t6UEhD0Buls4j5cIEyRC2ot\",\"kt\":\"1\",\"k\":[\"DDQ6D1NwopeRQDixcDdgOBYc6nx1THJMD8sDbkvSM9pQ\"],\"nt\":\"1\",\"n\":[\"EHXr2hO4OKvVHSpSGbYFbshlAc1xZqNNriX9hfS0Pqov\"],\"bt\":\"0\",\"br\":[],\"ba\":[],\"a\":[]}-AABAACdm8TRJ-7QCplK3j4aRfrQBrFTamoENzOGx6dMTnbhnOnX2xSnnq55_po6VAj0CkW_PmI45UZotCTDnAj788YM",
+    "replayed": {
+      "method": "GET",
+      "path": "/identifiers",
+      "query": null,
+      "request_headers": [
+        [
+          "Signify-Resource",
+          "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+        ],
+        [
+          "Signify-Timestamp",
+          "2021-06-27T21:26:21.233257+00:00"
+        ],
+        [
+          "Signature-Input",
+          "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+        ],
+        [
+          "Signature",
+          "indexed=\"?0\";signify=\"0BA6QuH-ATGYo6MMbuAXuAZcq_DBKgcY7oz7llE7K4wOIuNuzYnASZvaGG4dtxxQjT46p90N02w6AOVy9P4ccakD\""
+        ]
+      ],
+      "request_body": null,
+      "status": 401,
+      "response_headers": [
+        [
+          "access-control-allow-origin",
+          "*"
+        ],
+        [
+          "access-control-allow-methods",
+          "*"
+        ],
+        [
+          "access-control-allow-headers",
+          "*"
+        ],
+        [
+          "access-control-expose-headers",
+          "*"
+        ],
+        [
+          "access-control-max-age",
+          "1728000"
+        ],
+        [
+          "content-length",
+          "0"
+        ],
+        [
+          "content-type",
+          "application/json"
+        ]
+      ],
+      "response_body": "",
+      "verified_bases": [
+        "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+      ],
+      "signed_bases": []
+    },
+    "fresh": {
+      "method": "GET",
+      "path": "/identifiers",
+      "query": null,
+      "request_headers": [
+        [
+          "Signify-Resource",
+          "EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq"
+        ],
+        [
+          "Signify-Timestamp",
+          "2021-06-27T21:26:21.233257+00:00"
+        ],
+        [
+          "Signature-Input",
+          "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\";alg=\"ed25519\""
+        ],
+        [
+          "Signature",
+          "indexed=\"?0\";signify=\"0BCAwAlwZbRQ3M-bT3SyzAOMGQIue5tuZBeyfTxiCJE4nensNniBf_2C5DBPBHpqtGR5fEewiwA1Al5W0JKLME8P\""
+        ]
+      ],
+      "request_body": null,
+      "status": 200,
+      "response_headers": [
+        [
+          "access-control-allow-origin",
+          "*"
+        ],
+        [
+          "access-control-allow-methods",
+          "*"
+        ],
+        [
+          "access-control-allow-headers",
+          "*"
+        ],
+        [
+          "access-control-expose-headers",
+          "*"
+        ],
+        [
+          "access-control-max-age",
+          "1728000"
+        ],
+        [
+          "accept-ranges",
+          "aids"
+        ],
+        [
+          "content-range",
+          "aids 0-0/1"
+        ],
+        [
+          "content-type",
+          "application/json"
+        ],
+        [
+          "signify-resource",
+          "EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt"
+        ],
+        [
+          "signify-timestamp",
+          "2021-06-27T21:26:21.233257+00:00"
+        ],
+        [
+          "signature-input",
+          "signify=(\"signify-resource\" \"@method\" \"@path\" \"signify-timestamp\");created=1609459200;keyid=\"EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\";alg=\"ed25519\""
+        ],
+        [
+          "signature",
+          "indexed=\"?0\";signify=\"0BC2fnO3XmUQGaLOKPuIHzaIcZg5mm_fod3H4fUj19jwKa169HNseoWTGUNrJJCgvRkgv28N26YQ-pNtfy919kAP\""
+        ],
+        [
+          "content-length",
+          "375"
+        ]
+      ],
+      "response_body": "[{\"name\": \"aid1\", \"prefix\": \"EHgwVwQT15OJvilVvW57HE4w0-GPs_Stj2OFoAHZSysY\", \"salty\": {\"sxlt\": \"4CAYPIVrhdn16zfcHTS6HDg7a1gxaa6QbkTo9PMl3fKtmwNQG3XuJLT00WXUmnrCRBQycBZ8xgTNWTCOLVixV2ePlcsCrRYIkCvM\", \"pidx\": 0, \"kidx\": 0, \"stem\": \"signify:aid\", \"tier\": \"low\", \"dcode\": \"E\", \"icodes\": [\"A\"], \"ncodes\": [\"A\"], \"transferable\": true}, \"icp_dt\": \"2021-06-27T21:26:21.233257+00:00\"}]",
+      "verified_bases": [
+        "\"signify-resource\": EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EPwUOBk9QkxPM20JBaf_pFXPytSjTUoyxbx95uZJE1Hq;alg=ed25519\""
+      ],
+      "signed_bases": [
+        "\"signify-resource\": EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt\n\"@method\": GET\n\"@path\": /identifiers\n\"signify-timestamp\": 2021-06-27T21:26:21.233257+00:00\n\"@signature-params: (signify-resource @method @path signify-timestamp);created=1609459200;keyid=EEAJjjsbswsipSk6qypNw9bKszVfkAWvAYonKTKWHnDt;alg=ed25519\""
+      ]
+    }
+  }
+}

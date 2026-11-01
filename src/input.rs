@@ -16,18 +16,14 @@
 //! "@signature-params: (@method @path signify-resource signify-timestamp);created=1609459200;keyid=DN54…;alg=ed25519"
 //! ```
 //!
-//! This module ports `siginput` and `desiginput` from `src/keri/core/httping.ts`.
-//!
 //! # Two grammars, one value
 //!
-//! The header and the base spell the same information differently, and the difference is
-//! protocol-required rather than accidental: the header quotes each covered component and each
-//! textual parameter, while the base leaves both bare, and the base's trailing item puts the
-//! opening quote *before* `@signature-params` rather than around it. Both spellings are reproduced
-//! exactly.
+//! The header quotes each covered component and textual parameter while the base leaves both bare,
+//! and the base's trailing item opens its quote before `@signature-params`. Both spellings are
+//! protocol-required.
 //!
-//! The header is close to an RFC 8941 dictionary but the accepted space is deliberately narrower,
-//! so that every accepted header has exactly one signature base.
+//! The header is close to an RFC 8941 dictionary, narrowed so that every header
+//! [`SignatureInputHeader::parse`] accepts has exactly one signature base.
 
 use core::fmt;
 use std::error::Error;
@@ -39,10 +35,10 @@ use crate::header::{HeaderError, HeaderName, Headers};
 /// Name of the header this module formats and parses.
 pub const SIGNATURE_INPUT_HEADER_NAME: &str = "Signature-Input";
 
-/// Name of the header carrying the timestamp a KERIA request covers.
+/// Name of the header carrying the timestamp a request covers.
 pub const SIGNIFY_TIMESTAMP_HEADER_NAME: &str = "Signify-Timestamp";
 
-/// Name of the header carrying the identifier a KERIA request speaks for.
+/// Name of the header carrying the identifier a request speaks for.
 pub const SIGNIFY_RESOURCE_HEADER_NAME: &str = "Signify-Resource";
 
 /// Derived component naming the request method.
@@ -54,10 +50,10 @@ pub const PATH_COMPONENT: &str = "@path";
 /// Name of the trailing signature-base item that commits to the parameters themselves.
 pub const SIGNATURE_PARAMS_COMPONENT: &str = "@signature-params";
 
-/// The `alg` parameter value every Signify signature carries.
+/// The `alg` parameter value of an Ed25519 signature.
 pub const ED25519_ALGORITHM: &str = "ed25519";
 
-/// Default label for the one signature input a Signify client emits.
+/// Default label of a signature input.
 pub const SIGNIFY_LABEL: &str = "signify";
 
 /// Largest `Signature-Input` value this module parses or produces, in bytes.
@@ -87,8 +83,7 @@ pub const MAX_PARAMETER_INTEGER: u64 = 999_999_999_999_999;
 /// One validated dictionary label naming a signature input.
 ///
 /// The accepted text is the RFC 8941 dictionary key: a lower-case letter or `*`, then lower-case
-/// letters, digits, `_`, `-`, `.`, and `*`. The reference's own serializer refuses anything else,
-/// so an upper-case label would produce a header it could not emit.
+/// letters, digits, `_`, `-`, `.`, and `*`.
 ///
 /// ```
 /// use keri_http_auth::input::InputLabel;
@@ -105,7 +100,7 @@ pub struct InputLabel {
 }
 
 impl InputLabel {
-    /// Returns the `signify` label every Signify client uses.
+    /// Returns the `signify` label.
     #[must_use]
     pub fn signify() -> Self {
         Self {
@@ -164,10 +159,8 @@ const fn is_key_byte(byte: u8) -> bool {
 
 /// One thing a signature covers.
 ///
-/// The reference accepts any `@`-prefixed name but implements only `@method` and `@path`: every
-/// other derived component is listed in the header and then contributes **nothing** to the base, so
-/// the header advertises coverage the signature does not provide. Only the two that exist are
-/// representable here.
+/// A signer can write only `@method`, `@path` and headers. [`SignatureComponent::Unsupported`] holds
+/// any other `@`-name a received input lists.
 #[derive(Clone, Debug, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum SignatureComponent {
@@ -177,6 +170,9 @@ pub enum SignatureComponent {
     Path,
     /// One request or response header.
     Header(HeaderName),
+    /// An `@`-name that adds nothing to the base. Only [`SignatureInputHeader::parse_received`]
+    /// produces this; [`SignatureInputBuilder::build`] and [`SignatureInput::signature_base`] refuse it.
+    Unsupported(FieldText),
 }
 
 impl SignatureComponent {
@@ -202,6 +198,7 @@ impl SignatureComponent {
             Self::Method => METHOD_COMPONENT,
             Self::Path => PATH_COMPONENT,
             Self::Header(name) => name.as_str(),
+            Self::Unsupported(name) => name.as_str(),
         }
     }
 
@@ -210,6 +207,7 @@ impl SignatureComponent {
         match (self, other) {
             (Self::Method, Self::Method) | (Self::Path, Self::Path) => true,
             (Self::Header(left), Self::Header(right)) => left == right,
+            (Self::Unsupported(left), Self::Unsupported(right)) => left == right,
             _ => false,
         }
     }
@@ -229,11 +227,8 @@ impl fmt::Display for SignatureComponent {
     }
 }
 
-/// Returns the components `Authenticater.DefaultFields` covers, in its order.
-///
-/// Every KERIA request covers exactly these four: the method, the path, the identifier the request
-/// speaks for, and its timestamp. The two header names are lower-case, as upstream, which is also
-/// the spelling that interoperates with keripy.
+/// Returns the default coverage: the method, the path, the identifier a request speaks for, and its
+/// timestamp, in that order and with lower-case header names.
 ///
 /// # Errors
 ///
@@ -250,11 +245,8 @@ pub fn default_components() -> Result<Vec<SignatureComponent>, SignatureInputErr
 
 /// The method and path a signature covers.
 ///
-/// The reference validates neither: a path carrying a newline forges a whole component line in the
-/// signature base, since the base joins its items with one. Both are validated here.
-///
-/// The path must carry no query, matching every upstream call site — the client strips `?` before
-/// signing — so a caller cannot accidentally cover a query the peer will not.
+/// Both are validated, because a newline in a path would forge a line in the signature base. The
+/// path carries no query, so a caller cannot cover a query the peer will not.
 ///
 /// ```
 /// use keri_http_auth::input::RequestTarget;
@@ -350,6 +342,15 @@ impl fmt::Display for SignatureBase {
     }
 }
 
+/// An `expires` parameter.
+#[derive(Clone, Debug, Eq, PartialEq)]
+enum Expires {
+    /// Seconds since the Unix epoch.
+    Time(u64),
+    /// Text in a received input, which some signers write.
+    Text(FieldText),
+}
+
 /// One labelled signature input: what a signature covers, and the parameters describing it.
 ///
 /// Build one with [`SignatureInputBuilder`], or recover one by parsing a
@@ -359,7 +360,7 @@ pub struct SignatureInput {
     label: InputLabel,
     components: Vec<SignatureComponent>,
     created: u64,
-    expires: Option<u64>,
+    expires: Option<Expires>,
     nonce: Option<FieldText>,
     key_identifier: Option<FieldText>,
     context: Option<FieldText>,
@@ -381,18 +382,19 @@ impl SignatureInput {
 
     /// Returns the creation time, in seconds since the Unix epoch.
     ///
-    /// The reference takes this from the system clock. It is an input here, so a protocol crate
-    /// never reads the clock and a signature is reproducible; deciding whether a received value is
-    /// fresh enough is a replay policy, which belongs to the transport.
+    /// A parameter rather than a clock reading, so a signature is reproducible.
     #[must_use]
     pub const fn created(&self) -> u64 {
         self.created
     }
 
-    /// Returns the expiry time, when one is present.
+    /// Returns the expiry time, when one is present and numeric.
     #[must_use]
     pub const fn expires(&self) -> Option<u64> {
-        self.expires
+        match self.expires {
+            Some(Expires::Time(expires)) => Some(expires),
+            Some(Expires::Text(_)) | None => None,
+        }
     }
 
     /// Returns the nonce, when one is present.
@@ -425,14 +427,18 @@ impl SignatureInput {
     ///
     /// # Errors
     ///
-    /// Returns [`SignatureInputError::MissingCoveredHeader`] when a covered header is absent — the
-    /// reference silently drops it, so the caller gets a weaker signature than it asked for — and
-    /// [`SignatureInputError::SignatureBaseTooLong`] above [`MAX_SIGNATURE_BASE_BYTES`].
+    /// Returns [`SignatureInputError::MissingCoveredHeader`] when a covered header is absent,
+    /// [`SignatureInputError::NoComponents`] and [`SignatureInputError::UnknownDerivedComponent`] for
+    /// a received input no signer may write, and [`SignatureInputError::SignatureBaseTooLong`] above
+    /// [`MAX_SIGNATURE_BASE_BYTES`].
     pub fn signature_base(
         &self,
         target: &RequestTarget,
         headers: &Headers,
     ) -> Result<SignatureBase, SignatureInputError> {
+        if self.components.is_empty() {
+            return Err(SignatureInputError::NoComponents);
+        }
         let mut items: Vec<String> = Vec::with_capacity(self.components.len().saturating_add(1));
         for component in &self.components {
             let value = match component {
@@ -445,12 +451,49 @@ impl SignatureInput {
                             name: bounded(name.as_str()),
                         })?
                 }
+                SignatureComponent::Unsupported(name) => {
+                    return Err(SignatureInputError::UnknownDerivedComponent {
+                        name: bounded(name.as_str()),
+                    });
+                }
             };
             items.push(format!("\"{}\": {value}", component.as_str()));
         }
-        // The opening quote sits before `@signature-params` and the closing one after the last
-        // parameter, so the whole parameter list is inside one quoted item. That is the reference's
-        // spelling, and changing it would change every signature.
+        self.finish_base(items)
+    }
+
+    /// Builds the bytes a received input was signed over.
+    ///
+    /// Unlike [`SignatureInput::signature_base`], an absent header and an
+    /// [`SignatureComponent::Unsupported`] name add no line. Header names are lower-cased.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`SignatureInputError::SignatureBaseTooLong`] above [`MAX_SIGNATURE_BASE_BYTES`].
+    pub fn received_base(
+        &self,
+        target: &RequestTarget,
+        headers: &Headers,
+    ) -> Result<SignatureBase, SignatureInputError> {
+        let mut items: Vec<String> = Vec::with_capacity(self.components.len().saturating_add(1));
+        for component in &self.components {
+            match component {
+                SignatureComponent::Method => items.push(format!("\"{METHOD_COMPONENT}\": {}", target.method())),
+                SignatureComponent::Path => items.push(format!("\"{PATH_COMPONENT}\": {}", target.path())),
+                SignatureComponent::Header(name) => {
+                    if let Some(value) = headers.get(name.as_str()) {
+                        items.push(format!("\"{}\": {}", name.as_str().to_ascii_lowercase(), value.trim()));
+                    }
+                }
+                SignatureComponent::Unsupported(_) => {}
+            }
+        }
+        self.finish_base(items)
+    }
+
+    /// Appends the parameters line and joins a base.
+    fn finish_base(&self, mut items: Vec<String>) -> Result<SignatureBase, SignatureInputError> {
+        // One quoted item holds the whole parameter list, so the quote opens before the name.
         items.push(format!(
             "\"{SIGNATURE_PARAMS_COMPONENT}: {}\"",
             self.render_parameters(false)
@@ -482,11 +525,16 @@ impl SignatureInput {
             .join(" ");
 
         let mut rendered = format!("({names});created={}", self.created);
-        if let Some(expires) = self.expires {
+        if let Some(Expires::Time(expires)) = &self.expires {
             rendered.push_str(";expires=");
             rendered.push_str(&expires.to_string());
         }
+        let expires_text = match &self.expires {
+            Some(Expires::Text(text)) => Some(text),
+            _ => None,
+        };
         for (name, value) in [
+            ("expires", expires_text),
             ("nonce", self.nonce.as_ref()),
             ("keyid", self.key_identifier.as_ref()),
             ("context", self.context.as_ref()),
@@ -541,7 +589,7 @@ pub struct SignatureInputBuilder {
     label: InputLabel,
     components: Vec<SignatureComponent>,
     created: u64,
-    expires: Option<u64>,
+    expires: Option<Expires>,
     nonce: Option<FieldText>,
     key_identifier: Option<FieldText>,
     context: Option<FieldText>,
@@ -567,8 +615,8 @@ impl SignatureInputBuilder {
 
     /// Sets the expiry time, in seconds since the Unix epoch.
     #[must_use]
-    pub const fn expires(mut self, expires: u64) -> Self {
-        self.expires = Some(expires);
+    pub fn expires(mut self, expires: u64) -> Self {
+        self.expires = Some(Expires::Time(expires));
         self
     }
 
@@ -604,14 +652,13 @@ impl SignatureInputBuilder {
     ///
     /// # Errors
     ///
-    /// Returns [`SignatureInputError::NoComponents`] when nothing is covered — the reference emits
-    /// and accepts a signature binding neither method, path, nor header —
+    /// Returns [`SignatureInputError::NoComponents`] when nothing is covered,
     /// [`SignatureInputError::TooManyComponents`] above [`MAX_COMPONENTS`],
-    /// [`SignatureInputError::DuplicateComponent`] when one thing is covered twice;
-    /// [`SignatureInputError::ParameterOutOfRange`] when a time exceeds
-    /// [`MAX_PARAMETER_INTEGER`], which the header grammar cannot express; and
+    /// [`SignatureInputError::DuplicateComponent`] when one thing is covered twice,
+    /// [`SignatureInputError::UnknownDerivedComponent`] for an unsupported component,
+    /// [`SignatureInputError::ParameterOutOfRange`] when a time exceeds [`MAX_PARAMETER_INTEGER`], and
     /// [`SignatureInputError::InvalidParameterValue`] for a value carrying a backslash, which the
-    /// header would escape and the base would not — the reference's own escaping defect.
+    /// header would escape and the base would not.
     pub fn build(self) -> Result<SignatureInput, SignatureInputError> {
         if self.components.is_empty() {
             return Err(SignatureInputError::NoComponents);
@@ -620,6 +667,15 @@ impl SignatureInputBuilder {
             return Err(SignatureInputError::TooManyComponents {
                 count: self.components.len(),
                 maximum: MAX_COMPONENTS,
+            });
+        }
+        if let Some(SignatureComponent::Unsupported(name)) = self
+            .components
+            .iter()
+            .find(|component| matches!(component, SignatureComponent::Unsupported(_)))
+        {
+            return Err(SignatureInputError::UnknownDerivedComponent {
+                name: bounded(name.as_str()),
             });
         }
         for (position, component) in self.components.iter().enumerate() {
@@ -634,7 +690,16 @@ impl SignatureInputBuilder {
                 });
             }
         }
-        for (name, value) in [("created", Some(self.created)), ("expires", self.expires)] {
+        self.finish()
+    }
+
+    /// Checks the parameters, with no coverage rules.
+    fn finish(self) -> Result<SignatureInput, SignatureInputError> {
+        let expires = match self.expires {
+            Some(Expires::Time(expires)) => Some(expires),
+            _ => None,
+        };
+        for (name, value) in [("created", Some(self.created)), ("expires", expires)] {
             if value.is_some_and(|value| value > MAX_PARAMETER_INTEGER) {
                 return Err(SignatureInputError::ParameterOutOfRange { name });
             }
@@ -668,7 +733,7 @@ impl SignatureInputBuilder {
 
 /// One complete `Signature-Input` header value: a dictionary of labelled inputs.
 ///
-/// A Signify client emits exactly one member; the parser accepts several, as the reference does.
+/// A signer writes one member; a parser accepts several.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct SignatureInputHeader {
     inputs: Vec<SignatureInput>,
@@ -684,8 +749,7 @@ impl SignatureInputHeader {
     ///
     /// Returns [`SignatureInputError::NoInputs`] for an empty list,
     /// [`SignatureInputError::TooManyInputs`] above [`MAX_INPUTS`], and
-    /// [`SignatureInputError::DuplicateLabel`] for a repeated label — a dictionary keeps only the
-    /// last member with a given key, so upstream the earlier input silently disappears.
+    /// [`SignatureInputError::DuplicateLabel`] for a repeated label.
     pub fn new(inputs: Vec<SignatureInput>) -> Result<Self, SignatureInputError> {
         if inputs.is_empty() {
             return Err(SignatureInputError::NoInputs);
@@ -729,8 +793,7 @@ impl SignatureInputHeader {
     /// Returns [`SignatureInputError::SignatureInputTooLong`] above
     /// [`MAX_SIGNATURE_INPUT_BYTES`].
     pub fn to_header_value(&self) -> Result<String, SignatureInputError> {
-        // Two members are separated by a comma and a space, which is what the reference's
-        // serializer emits; `fixtures/authing/v1.json` pins the exact spelling.
+        // A comma and a space separate two members.
         let rendered = self
             .inputs
             .iter()
@@ -754,17 +817,33 @@ impl SignatureInputHeader {
     /// [`MAX_SIGNATURE_INPUT_BYTES`], [`SignatureInputError::Malformed`] for anything the narrowed
     /// dictionary grammar does not accept, [`SignatureInputError::MissingCreated`] for an input
     /// without the one required parameter, [`SignatureInputError::UnknownParameter`] for a
-    /// parameter the reference would silently ignore, and
-    /// [`SignatureInputError::ParametersOutOfOrder`] when the parameters are not in the order both
-    /// implementations emit and rebuild them in.
+    /// parameter this format does not define, and [`SignatureInputError::ParametersOutOfOrder`] when
+    /// the parameters are not in canonical order.
     pub fn parse(value: &str) -> Result<Self, SignatureInputError> {
+        Self::parse_with(value, false)
+    }
+
+    /// Parses a header as a verifier receives it, for [`SignatureInput::received_base`].
+    ///
+    /// This also accepts what a lenient sender may write: an empty covered list, repeated components,
+    /// other `@`-names as [`SignatureComponent::Unsupported`], and a textual `expires`. Use
+    /// [`SignatureInputHeader::parse`] to read a response.
+    ///
+    /// # Errors
+    ///
+    /// As [`SignatureInputHeader::parse`], except for the cases above.
+    pub fn parse_received(value: &str) -> Result<Self, SignatureInputError> {
+        Self::parse_with(value, true)
+    }
+
+    fn parse_with(value: &str, received: bool) -> Result<Self, SignatureInputError> {
         if value.len() > MAX_SIGNATURE_INPUT_BYTES {
             return Err(SignatureInputError::SignatureInputTooLong {
                 length: value.len(),
                 maximum: MAX_SIGNATURE_INPUT_BYTES,
             });
         }
-        let mut parser = Parser::new(value);
+        let mut parser = Parser::new(value, received);
         let mut inputs = Vec::new();
         loop {
             inputs.push(parser.parse_input()?);
@@ -796,20 +875,22 @@ impl TryFrom<&str> for SignatureInputHeader {
     }
 }
 
-/// Every parameter name, in the order both implementations write and rebuild them.
+/// Every parameter name, in canonical order.
 const PARAMETER_ORDER: [&str; 6] = ["created", "expires", "nonce", "keyid", "context", "alg"];
 
 /// A cursor over one header value.
 struct Parser<'input> {
     bytes: &'input [u8],
     position: usize,
+    received: bool,
 }
 
 impl<'input> Parser<'input> {
-    const fn new(value: &'input str) -> Self {
+    const fn new(value: &'input str, received: bool) -> Self {
         Self {
             bytes: value.as_bytes(),
             position: 0,
+            received,
         }
     }
 
@@ -888,7 +969,10 @@ impl<'input> Parser<'input> {
             }
             match name {
                 "created" => created = Some(self.parse_integer()?),
-                "expires" => expires = Some(self.parse_integer()?),
+                "expires" if self.received && self.peek() == Some(b'"') => {
+                    expires = Some(Expires::Text(self.parse_text()?));
+                }
+                "expires" => expires = Some(Expires::Time(self.parse_integer()?)),
                 "nonce" => nonce = Some(self.parse_text()?),
                 "keyid" => key_identifier = Some(self.parse_text()?),
                 "context" => context = Some(self.parse_text()?),
@@ -900,9 +984,7 @@ impl<'input> Parser<'input> {
             label: bounded(label.as_str()),
         })?;
         let mut builder = SignatureInputBuilder::new(label, components, created);
-        if let Some(expires) = expires {
-            builder = builder.expires(expires);
-        }
+        builder.expires = expires;
         if let Some(nonce) = nonce {
             builder = builder.nonce(nonce);
         }
@@ -914,6 +996,9 @@ impl<'input> Parser<'input> {
         }
         if let Some(algorithm) = algorithm {
             builder = builder.algorithm(algorithm);
+        }
+        if self.received {
+            return builder.finish();
         }
         builder.build()
     }
@@ -936,7 +1021,12 @@ impl<'input> Parser<'input> {
                 });
             }
             let name = self.parse_quoted()?;
-            components.push(SignatureComponent::new(name)?);
+            components.push(match SignatureComponent::new(name) {
+                Err(SignatureInputError::UnknownDerivedComponent { .. }) if self.received => {
+                    SignatureComponent::Unsupported(FieldText::new(name)?)
+                }
+                component => component?,
+            });
             match self.peek() {
                 Some(b' ' | b'\t') => self.skip_whitespace(),
                 Some(b')') => {}
@@ -1015,8 +1105,6 @@ pub enum SignatureInputError {
         label: String,
     },
     /// A derived component other than `@method` or `@path` was named.
-    ///
-    /// The reference lists it and then covers nothing for it.
     UnknownDerivedComponent {
         /// Bounded copy of the rejected name.
         name: String,
@@ -1046,8 +1134,6 @@ pub enum SignatureInputError {
         name: String,
     },
     /// A covered header is absent, so the base cannot be built.
-    ///
-    /// The reference drops the component instead, silently weakening the signature.
     MissingCoveredHeader {
         /// Bounded copy of the missing name.
         name: String,
@@ -1061,7 +1147,7 @@ pub enum SignatureInputError {
         /// Accepted maximum.
         maximum: usize,
     },
-    /// The same label appears twice, where a dictionary keeps only the last.
+    /// The same label appears twice.
     DuplicateLabel {
         /// Bounded copy of the repeated label.
         label: String,
@@ -1072,13 +1158,11 @@ pub enum SignatureInputError {
         label: String,
     },
     /// A parameter this format does not define was present.
-    ///
-    /// The reference ignores it, which then makes verification fail with no explanation.
     UnknownParameter {
         /// Bounded copy of the rejected name.
         name: String,
     },
-    /// The parameters are not in the order both implementations write them in.
+    /// The parameters are not in canonical order.
     ParametersOutOfOrder,
     /// A numeric parameter is outside what the header grammar can express.
     ParameterOutOfRange {
@@ -1234,7 +1318,7 @@ mod tests {
     }
 
     #[test]
-    fn the_default_components_are_the_reference_field_list() -> Result<(), Box<dyn Error>> {
+    fn the_default_components_are_in_order() -> Result<(), Box<dyn Error>> {
         let components = default_components()?;
         let names: Vec<&str> = components.iter().map(SignatureComponent::as_str).collect();
         assert_eq!(names, ["@method", "@path", "signify-resource", "signify-timestamp"]);
@@ -1316,7 +1400,7 @@ mod tests {
 
     #[test]
     fn a_missing_covered_header_is_refused() -> Result<(), Box<dyn Error>> {
-        // Upstream the component is silently dropped, so the caller signs less than it asked to.
+        // Never signs less than the caller asked for.
         let input = SignatureInputBuilder::new(
             InputLabel::signify(),
             vec![SignatureComponent::Method, SignatureComponent::new("x-absent")?],
@@ -1386,7 +1470,6 @@ mod tests {
         assert_eq!(target.path(), "/identifiers/aid1");
         assert_eq!(RequestTarget::new("GET", "/oobi/EB%2Fa")?.path(), "/oobi/EB%2Fa");
 
-        // Upstream all of these are interpolated into the base unvalidated.
         for path in [
             "/a\n\"@method\": DELETE",
             "relative",
@@ -1420,7 +1503,6 @@ mod tests {
 
     #[test]
     fn empty_and_repeated_coverage_is_refused() -> Result<(), Box<dyn Error>> {
-        // Upstream an empty covered list is emitted and parsed, binding nothing at all.
         assert!(matches!(
             SignatureInputBuilder::new(InputLabel::signify(), Vec::new(), 1).build(),
             Err(SignatureInputError::NoComponents)
@@ -1459,7 +1541,6 @@ mod tests {
             SignatureInputHeader::new(Vec::new()),
             Err(SignatureInputError::NoInputs)
         ));
-        // Upstream a dictionary keeps the last member, so the earlier input silently disappears.
         assert!(matches!(
             SignatureInputHeader::parse("signify=(\"@method\");created=1, signify=(\"@path\");created=2"),
             Err(SignatureInputError::DuplicateLabel { .. })
@@ -1495,7 +1576,6 @@ mod tests {
             SignatureInputHeader::parse("signify=(\"@method\");created=1;created=2"),
             Err(SignatureInputError::ParametersOutOfOrder)
         ));
-        // The reference ignores an unknown parameter, which then makes verification fail silently.
         assert!(matches!(
             SignatureInputHeader::parse("signify=(\"@method\");created=1;tag=\"x\""),
             Err(SignatureInputError::UnknownParameter { name }) if name == "tag"
@@ -1576,8 +1656,7 @@ mod tests {
 
     #[test]
     fn parameter_values_cannot_forge_a_parameter() {
-        // Upstream the header escapes a quote while the base does not, and a semicolon in a value
-        // adds a whole parameter to the signed bytes.
+        // A quote in a value could otherwise add a whole parameter to the signed bytes.
         for text in ["a\"b", "a;alg=forged", "a b", "a,b", "a=b"] {
             assert!(FieldText::new(text).is_err(), "{text:?} was accepted");
         }
@@ -1593,9 +1672,7 @@ mod tests {
         ));
     }
 
-    /// Regression: a property test built a nonce of a single backslash. The header escaped it and
-    /// the base did not, so the rendered header no longer parsed and the two spellings disagreed
-    /// about the bytes signed.
+    /// Regression: a nonce of one backslash rendered a header that no longer parsed.
     #[test]
     fn a_parameter_value_may_not_carry_a_backslash() -> Result<(), Box<dyn Error>> {
         assert!(matches!(

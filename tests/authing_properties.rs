@@ -18,7 +18,7 @@ fn fail<T, E: core::fmt::Display>(result: Result<T, E>) -> Result<T, TestCaseErr
 }
 
 /// One signer, derived once: Argon2id is deliberately expensive, so per-case derivation would
-/// dominate the run. The temporary profile is the reference's own cheap parameter set.
+/// dominate the run. The temporary profile is a cheap parameter set.
 fn signer() -> Option<&'static RequestSigner> {
     static SIGNER: OnceLock<Option<RequestSigner>> = OnceLock::new();
     SIGNER

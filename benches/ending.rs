@@ -2,7 +2,7 @@
 //!
 //! Every authenticated request renders one header, and every authenticated response parses one, so
 //! both sit on the hot path of the whole SDK. The single-marker case is what `authing` actually
-//! sends; the three-signature case is the multi-key shape the upstream tests use.
+//! sends; the three-signature case is the multi-key shape.
 
 use std::hint::black_box;
 
@@ -45,7 +45,7 @@ fn benchmark_ending(criterion: &mut Criterion) {
         });
     }
 
-    // Three indexed signatures with every parameter: the widest shape the upstream tests use.
+    // Three indexed signatures with every parameter, the widest common shape.
     let markers: Option<Vec<IndexedMarker>> = SIGERS
         .iter()
         .map(|qb64| IndexedSignature::from_qb64(qb64).ok().map(IndexedMarker::new))

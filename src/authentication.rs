@@ -1,23 +1,17 @@
 //! Signing a request and verifying a response.
 //!
-//! This module ports `Authenticater` from `src/keri/core/authing.ts`. It composes the two halves
-//! that already exist: [`crate::input`] decides what a signature covers and produces the
-//! exact bytes signed, and [`crate::fields`] carries the signature material.
+//! [`crate::input`] decides what a signature covers and the exact bytes signed, and
+//! [`crate::fields`] carries the signature material. This module composes them with a key.
 //!
 //! ```text
 //! Signature-Input: signify=("@method" "@path" "signify-resource" "signify-timestamp");created=…;keyid="…";alg="ed25519"
 //! Signature:       indexed="?0";signify="0BCh…"
 //! ```
 //!
-//! # One role per type
+//! [`RequestSigner`] owns the secret and [`ResponseVerifier`] owns the public key, so a value that
+//! only checks responses never holds signing capability. [`crate::server`] holds the other direction.
 //!
-//! The reference's `Authenticater` always holds both a private signer and a public verifier, even
-//! where only one is used — `createSignedRequest` passes the same key twice. Here [`RequestSigner`]
-//! owns the secret and [`ResponseVerifier`] owns the public key, so a value that only checks
-//! responses never holds signing capability.
-//!
-//! Freshness is deliberately not decided here: [`SignatureInput::created`] is returned to the
-//! caller, and replay policy belongs to the transport that sends and receives the messages.
+//! Replay policy is the caller's: [`SignatureInput::created`] is returned for it to judge.
 
 use core::fmt;
 use std::error::Error;
@@ -46,7 +40,7 @@ use crate::input::{
 /// use keri_http_auth::input::{RequestTarget, default_components};
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
-/// // The salt the pinned upstream tests use; it is their own public constant.
+/// // A fixed example salt; never use a public salt for real keys.
 /// let salt = Salt::from_raw(b"0123456789abcdef", SecurityTier::Low)?;
 /// let signer = RequestSigner::new(salt.derive_signer("", KeyTransferability::Transferable)?);
 ///
@@ -80,7 +74,7 @@ pub struct RequestSigner {
 }
 
 impl RequestSigner {
-    /// Uses one signer under the `signify` label every KERIA request carries.
+    /// Uses one signer under the `signify` label.
     #[must_use]
     pub fn new(signer: Signer) -> Self {
         Self {
@@ -114,9 +108,8 @@ impl RequestSigner {
 
     /// Builds the signature input a Signify request carries.
     ///
-    /// The `keyid` parameter is this signer's verification key and `alg` is
-    /// [`ED25519_ALGORITHM`], exactly as the reference sets them. `created` is a parameter rather
-    /// than a clock reading, so the result is reproducible.
+    /// `keyid` is this signer's verification key and `alg` is [`ED25519_ALGORITHM`]. `created` is a
+    /// parameter rather than a clock reading, so the result is reproducible.
     ///
     /// # Errors
     ///
@@ -136,7 +129,7 @@ impl RequestSigner {
     /// Signs one request, returning the two headers it must carry.
     ///
     /// The signature covers the base [`SignatureInput::signature_base`] derives, and is attached
-    /// as one named unindexed marker — the only shape the reference ever emits.
+    /// as one named unindexed marker.
     ///
     /// # Errors
     ///
@@ -168,7 +161,7 @@ impl RequestSigner {
 }
 
 impl fmt::Debug for RequestSigner {
-    /// Redacts the signer, whose own `Debug` is redacted for the same reason.
+    /// Redacts the signer.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("RequestSigner")
@@ -197,7 +190,7 @@ impl AuthenticatedHeaders {
         &self.signature
     }
 
-    /// Returns both headers with their names, in the order the reference appends them.
+    /// Returns both headers with their names, `Signature-Input` first.
     pub fn iter(&self) -> impl Iterator<Item = (&'static str, &str)> {
         [
             (SIGNATURE_INPUT_HEADER_NAME, self.signature_input.as_str()),
@@ -241,7 +234,7 @@ pub struct ResponseVerifier {
 }
 
 impl ResponseVerifier {
-    /// Uses one key under the `signify` label every KERIA response carries.
+    /// Uses one key under the `signify` label.
     #[must_use]
     pub fn new(key: VerificationKey) -> Self {
         Self {
@@ -251,9 +244,6 @@ impl ResponseVerifier {
     }
 
     /// Uses one key under an explicit label.
-    ///
-    /// The reference hardcodes `signify` and reports any other label as simply unverified, so a
-    /// correctly signed message under another label is never checked at all.
     #[must_use]
     pub const fn with_label(key: VerificationKey, label: InputLabel) -> Self {
         Self { key, label }
@@ -273,16 +263,13 @@ impl ResponseVerifier {
 
     /// Verifies one message, returning the input its signature covered.
     ///
-    /// The `Signature-Input` and `Signature` headers are read from `headers`, as upstream. Every
-    /// signage of the `Signature` header is searched for a marker under this verifier's label, and
-    /// exactly one must carry it; the reference reads only the first signage, so a signature
-    /// carried in a later one is invisible to it.
+    /// Every signage of the `Signature` header is searched for a marker under this verifier's label,
+    /// and exactly one must carry it.
     ///
     /// # Errors
     ///
     /// Returns [`AuthenticationError::MissingSignatureInput`] or
-    /// [`AuthenticationError::MissingSignature`] when a header is absent — the reference returns
-    /// `false` for both, which is indistinguishable from a bad signature;
+    /// [`AuthenticationError::MissingSignature`] when a header is absent;
     /// [`AuthenticationError::UnknownLabel`] when no input carries this label;
     /// [`AuthenticationError::SignatureNotFound`] or [`AuthenticationError::AmbiguousSignature`]
     /// when the marker is missing or repeated; [`AuthenticationError::Input`] when the base cannot
@@ -304,7 +291,7 @@ impl ResponseVerifier {
             })?;
 
         let signature_header = SignatureHeader::parse(signature_value)?;
-        let signature = self.find_signature(&signature_header)?;
+        let signature = find_signature(&signature_header, &self.label)?;
 
         let base = input.signature_base(target, headers)?;
         self.key
@@ -314,42 +301,45 @@ impl ResponseVerifier {
             })?;
         Ok(input.clone())
     }
+}
 
-    /// Finds the one signature written under this verifier's label.
-    fn find_signature<'header>(&self, header: &'header SignatureHeader) -> Result<&'header [u8], AuthenticationError> {
-        let label = self.label.as_str();
-        let mut found: Option<&[u8]> = None;
-        for signage in header.signages() {
-            let raw = match signage.markers() {
-                SignageMarkers::Indexed(markers) => markers
-                    .iter()
-                    .find(|marker| marker.tag() == label)
-                    .map(|marker| marker.signature().raw()),
-                SignageMarkers::Unindexed(markers) => {
-                    let mut matched = None;
-                    for marker in markers {
-                        if marker.tag()? == label {
-                            matched = Some(marker.signature().raw().as_slice());
-                            break;
-                        }
+/// Finds the one signature written under a label, searching every signage.
+pub(crate) fn find_signature<'header>(
+    header: &'header SignatureHeader,
+    label: &InputLabel,
+) -> Result<&'header [u8], AuthenticationError> {
+    let label = label.as_str();
+    let mut found: Option<&[u8]> = None;
+    for signage in header.signages() {
+        let raw = match signage.markers() {
+            SignageMarkers::Indexed(markers) => markers
+                .iter()
+                .find(|marker| marker.tag() == label)
+                .map(|marker| marker.signature().raw()),
+            SignageMarkers::Unindexed(markers) => {
+                let mut matched = None;
+                for marker in markers {
+                    if marker.tag()? == label {
+                        matched = Some(marker.signature().raw().as_slice());
+                        break;
                     }
-                    matched
                 }
-                // A non-CESR signage carries uninterpreted text, not signature material.
-                SignageMarkers::Opaque { .. } => None,
-            };
-            let Some(raw) = raw else { continue };
-            if found.is_some() {
-                return Err(AuthenticationError::AmbiguousSignature {
-                    label: label.to_owned(),
-                });
+                matched
             }
-            found = Some(raw);
+            // A non-CESR signage carries uninterpreted text, not signature material.
+            SignageMarkers::Opaque { .. } => None,
+        };
+        let Some(raw) = raw else { continue };
+        if found.is_some() {
+            return Err(AuthenticationError::AmbiguousSignature {
+                label: label.to_owned(),
+            });
         }
-        found.ok_or_else(|| AuthenticationError::SignatureNotFound {
-            label: label.to_owned(),
-        })
+        found = Some(raw);
     }
+    found.ok_or_else(|| AuthenticationError::SignatureNotFound {
+        label: label.to_owned(),
+    })
 }
 
 /// Stable request-authentication failures.
@@ -377,8 +367,7 @@ pub enum AuthenticationError {
     },
     /// The signature does not authenticate the bytes the input describes.
     ///
-    /// No further detail is reported: which step failed is exactly what an attacker probing a
-    /// verifier would want to learn.
+    /// No further detail is reported, so a prober learns nothing about which step failed.
     Verification {
         /// The label whose signature failed.
         label: String,
@@ -602,8 +591,7 @@ mod tests {
         let target = RequestTarget::new("POST", "/boot")?;
         let attached = signer.sign(&input, &target, &request_headers()?)?;
 
-        // Upstream this silently drops the component and then reports the signature invalid; here
-        // the cause is named.
+        // The cause is named, not reported as a bad signature.
         let mut stripped = Headers::from_pairs([(HeaderName::new("Signify-Resource")?, HeaderValue::new(RESOURCE)?)])?;
         attached.apply(&mut stripped)?;
         let verifier = ResponseVerifier::new(signer.signer.verifier().clone());
@@ -622,7 +610,7 @@ mod tests {
         let verifier = ResponseVerifier::new(signer.signer.verifier().clone());
         let target = RequestTarget::new("POST", "/boot")?;
 
-        // Upstream both of these return `false`, which is indistinguishable from a bad signature.
+        // Distinguishable from a bad signature.
         assert!(matches!(
             verifier.verify(&target, &request_headers()?),
             Err(AuthenticationError::MissingSignatureInput)
@@ -654,8 +642,7 @@ mod tests {
         let mut headers = request_headers()?;
         signer.sign(&input, &target, &headers)?.apply(&mut headers)?;
 
-        // Upstream a response labelled anything but `signify` is reported unverified rather than
-        // checked; here the label is a parameter, so it verifies.
+        // The label is a parameter, so another label verifies too.
         let verifier = ResponseVerifier::with_label(signer.signer.verifier().clone(), InputLabel::new("sig0")?);
         assert_eq!(verifier.verify(&target, &headers)?, input);
 
@@ -675,7 +662,7 @@ mod tests {
         let attached = signer.sign(&input, &target, &request_headers()?)?;
         let verifier = ResponseVerifier::new(signer.signer.verifier().clone());
 
-        // The reference reads only signage zero, so this signature would be invisible to it.
+        // A later signage is searched as well.
         let decoy = r#"indexed="?0";x="0BCsufRGYI-sRvS2c0rsOueSoSRtrjODaf48DYLJbLvvD8aHe7b2sWGebZ-y9ichhsxMF3Hhn-3LYSKIrnmH3oIN""#;
         let mut headers = request_headers()?;
         headers.insert(
